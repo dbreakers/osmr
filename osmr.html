@@ -1,0 +1,3578 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- Copyright David Breakwell 2017 -->
+<!-- Please don't copy this code!   -->
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html>
+<head>
+<title>OSMR Reporting</title>
+
+<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="favicon/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="favicon/manifest.json">
+<link rel="mask-icon" href="favicon/safari-pinned-tab.svg" color="#5bbad5">
+<link rel="shortcut icon" href="favicon.ico">
+<meta name="msapplication-config" content="@2ndnewhawscouts.com/ssl/favicon/browserconfig.xml">
+<meta name="theme-color" content="#4d1979">
+<link rel="stylesheet" type="text/css" href="https://www.2ndnewhawscouts.org.uk/osmr/css/pivot.css">
+<link rel="stylesheet" type="text/css" href="https://www.2ndnewhawscouts.org.uk/osmr/multiple-select.css">
+<link rel="stylesheet" type="text/css" href="https://www.2ndnewhawscouts.org.uk/osmr/css/slick.grid.css">
+<link rel="stylesheet" type="text/css" href="https://www.2ndnewhawscouts.org.uk/osmr/css/osmr.css">
+
+<link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/pivot.js?ts=6"></script>
+<script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/multiple-select.js"></script>
+<script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/jquery.event.drag-2.2.js"></script>
+<script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/jquery.event.drop-2.2.js"></script>
+<script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/gchart_renderers.js"></script>
+<script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/slick.core.js"></script>
+<script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/slick.grid.js"></script>
+
+<script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/FileSaver.js"></script>
+
+<script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/blob.js"></script>
+
+
+<script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/slick.dataview.js"></script>
+<script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/slick.groupitemmetadataprovider.js"></script>
+<script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/slick.cellselectionmodel.js"></script>
+<script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/slick.cellrangeselector.js"></script>
+<script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/slick.pager.js"></script>
+<script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/slick.columnpicker.js"></script>
+<script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/xlsx.full.min.js"></script>
+<script type="text/javascript" src=" https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
+<!--<script type="text/javascript" src=" https://p10.secure.hostingprod.com/@www.2ndnewhawscouts.com/ssl/pdfmake.min.js"></script> -->
+<script type="text/javascript" src=" https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.33/pdfmake.js"></script>
+<script type="text/javascript" src=" https://www.2ndnewhawscouts.org.uk/osmr/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+</head>
+<body>
+<script>
+
+var relay_path = "https://www.2ndnewhawscouts.org.uk/osmr/osmrelay.php";
+var api_number = "42";
+
+var osmr_version = "1.00.00";
+var url = window.location.href
+var arr = url.split("/");
+if (arr[0]!="https:") { window.location.replace("https://www.2ndnewhawscouts.org.uk/osmr/osmr.html");};
+var pdf_file
+var security = new Object();
+security = null;
+var script = document.createElement("script");
+    script.src = "https://www.google.com/jsapi";
+    script.type = "text/javascript";
+    document.getElementsByTagName("head")[0].appendChild(script);
+ var sections = ""
+ var patrols = ""
+ var scouts = ""
+ var roles = ""
+ var terms = ""
+ var report_list = { 'reports' : [] };
+ var template_report;
+ var dialog
+ var dialog_delay
+ var dialog2
+  var pdf_doc_copy = new Object;
+ var dialog_saveas
+ var dialog_confirm
+var dialog_pdf
+ var report_config = new Object();
+ var old_report_config = new Object();
+  var section_config
+  var roles_config
+  var terms_config
+  var get_data_array = []
+ var get_data_array2 = []
+  var api_setup = []
+  var link = window.document.createElement('link');
+
+const removeDuplicates4 = (list) => list.reduce((r, i) => 
+  !r.some(j => Object.keys(i).length === Object.keys(j).length 
+    && !Object.keys(i).some(k => i[k] !== j[k])) ? [...r, i] : r
+, [])
+
+ 
+   
+      var dialog_array = [ "Members & Badges","Badges","Events","Events & Attendance","Events & QM Lists"]
+      
+      var build_dialog = "<div id=\"dialog-form\" title=\"Create a Report\"><span id=\"checks\"></span><br><span>Date: <input type=\"text\" id=\"datepicker2\">";
+      build_dialog = build_dialog + "Report Type: "+"<select id=\"report_type2\"><option  value=\"Members\">Members</option>";
+      for (var dodrop in dialog_array) { build_dialog = build_dialog + "<option value=\""+dialog_array[dodrop]+"\">"+dialog_array[dodrop]+"</option>"; }
+      build_dialog = build_dialog + "</select></span><br><p><input type =\"checkbox\" name=\"refresh\" value=\"refresh\" id=\"refresh\">Refresh Data (Ignore Cache)";
+      build_dialog = build_dialog + "&nbsp;&nbsp;&nbsp;&nbsp;Output: <input type =\"radio\" name=\"outputtype\" value=\"grid\">Grid<input type =\"radio\" name=\"outputtype\" value=\"pivot\">Pivot </p>";
+      build_dialog = build_dialog + "</p><p>Saved Report: <select id=\"SavedReports2\"></select></p>";
+      build_dialog = build_dialog + "<p>Find this useful? Think about a donation to <a href=\"https://mydonate.bt.com/charities/2ndnewhawscoutgroup\" target=\"_blank\">2nd New Haw Scout Group</a>"
+    build_dialog = build_dialog + "</div>";  
+    $("body").append(build_dialog);
+      $("body").append("<div id=\"dialog-form2\" title=\"Create a Report : Select Fields\"><div class=\"progress-label\"></div><div id=\"progressbar\"></div><span id=\"fieldlist\"></span></div>");  
+      build_dialog = "<div id=\"dialog-form3\" title=\"Report\">"
+    //  build_dialog = build_dialog +"<p><table width=100%><tr><td><label id='display_total' ><input  checked type=\"checkbox\" name=\"display_total\">Display Totals</label></td><td>";
+     // build_dialog = build_dialog + "<label>PDF Font Size: <input  type=\"text\" id='display_size' name=\"display_size\" value=\"6\" size=\"3\">pt</label></td><td>";
+    //  build_dialog = build_dialog + "<label>PDF Page Size: <select id='page_size' name=\"page_size\">";
+    //  var size_array = [ "A4", "4A0", "2A0", "A0", "A1", "A2", "A3", "A5", "EXECUTIVE", "FOLIO", "LEGAL", "LETTER", "TABLOID" ];
+     // for (dodrop in size_array) { build_dialog = build_dialog + "<option value=\""+size_array[dodrop]+"\">"+size_array[dodrop]+"</option>"; };
+     // build_dialog = build_dialog + "</select></label></td><td><label  >  PDF Orientation: <select name=\"page_orient\" id='page_orient'><option value=\"landscape\">Landscape</option><option value=\"portrait\">Portrait</option></select>";
+     // build_dialog = build_dialog +"</td></tr></table></p>";
+      build_dialog = build_dialog + "<div id=\"reportoutputxx\" style=\"height: auto; width: 90%; margin: 30px;border-style: solid!important;\"></div>";
+      build_dialog = build_dialog + "<div id=\"reportdata\"></div><textarea rows=\"4\" cols=\"50\" id=\"config_json2\"></textarea>";
+      
+      build_dialog = build_dialog +"</div>";
+      $("body").append(build_dialog);
+      $("body").append("<div id=\"dialog-saveas\" title=\"Save Report\"><p>Save Report as: <input type=\"text\" id=\"saveas\"></p><p>Include Filters <input type=\"checkbox\" id=\"saveas_filters\"></p><p>Existing Reports:</p><div id=\"saveas_list\"></div></div>");    
+      $("body").append("<div id=\"dialog-delete\" title=\"Delete Report\"><p><span id=\"delete_confirm\"></span></p></div>");
+      $("body").append("<div id=\"dialog-confirm\" title=\"Confirmation\"><p><span id=\"confirmation\"></span></p></div>");
+      $("body").append("<div id=\"dialog-delay\" title=\"Wait\"><p><span id=\"wait\"><img class=\"delay_img\" src=\"icons\\triangle.gif\" align=\"center\"></span></p></div>");
+
+ dialog = $( "#dialog-form" ).dialog({
+      autoOpen: false,
+      height: 425,
+      width: 650,
+      modal: true,
+      buttons: {
+       "Select Fields": select_fields,
+       "Delete Report": delete_report,
+        Cancel: function() {
+          dialog.dialog( "close" );
+        }
+      },
+      close: function() {
+ //       form[ 0 ].reset();
+ //       allFields.removeClass( "ui-state-error" );
+      }
+    });
+      
+    dialog2 = $( "#dialog-form2" ).dialog({
+      autoOpen: false,
+      height: 425,
+      width: 650,
+      modal: true,
+      buttons: {
+       "Generate Report": function () {  
+         
+         if ($("#progressbar :visible").length==0) {select_checks();}
+         },    
+        Cancel: function() {
+          dialog2.dialog( "close" );
+        }
+      },
+      close: function() {
+ //       form[ 0 ].reset();
+ //       allFields.removeClass( "ui-state-error" );
+      }
+    });
+ 
+         
+      dialog3 = $( "#dialog-form3" ).dialog({
+      autoOpen: false,
+     'width': $(window).width(),
+     'height': $(window).height(),
+      modal: true,
+      buttons: {
+      // "Checklist": select_checks,   
+          "Save" :  function() { 
+              // GM_setValue("foo",$("#config_json").val() ); 
+             //  alert(GM_listValues());
+              report_saveas();
+          },
+ //         "Print" : print_report,
+          "Back"  : function() { dialog2.dialog( "open" ); dialog3.dialog( "close" ); assemble_data2(); } ,
+          
+        "Close": function() {
+          dialog3.dialog( "close" );
+        }
+      },
+      close: function() {
+      }
+    });
+    
+    dialog_delete =   $( "#dialog-delete" ).dialog({
+      autoOpen: false,
+     'width': 400,
+     'height': 200,
+      modal: true,
+      buttons: {
+          "Delete" :  function() {
+report_list.reports.splice(report_list.reports.findIndex(function(a){return a.name==$("#DeleteReports option:selected").text()}),1);
+
+ 
+               localStorage.setItem('report_list', JSON.stringify(report_list));
+$('#DeleteReports').children('option').remove();
+                $('#SavedReports').children('option').remove();
+   $("#SavedReports").append("<option  value=\"blank\"></option>");
+$("#DeleteReports").append("<option  value=\"blank\"></option>");
+   // var report_list = GM_listValues();
+    for (var report in report_list.reports) {
+        $("#SavedReports").append("<option  value=\"reports\">"+report_list.reports[report].name+"</option>");
+$("#DeleteReports").append("<option  value=\"reports\">"+report_list.reports[report].name+"</option>");
+
+    }
+
+
+
+     //          GM_deleteValue($("#SavedReports option:selected").text());
+               
+               dialog_delete.dialog( "close" );
+          },
+          
+          
+          
+        "Cancel": function() {
+          dialog_delete.dialog( "close" );
+        }
+      },
+      close: function() {
+      }
+    });
+      
+      dialog_confirm = $("#dialog-confirm").dialog({
+      autoOpen: false,
+      modal: true,
+      buttons: {
+        "OK": function() {
+          dialog_confirm.dialog( "close" );
+        }
+      },
+      close: function() {
+      }
+    });
+    dialog_delay = $("#dialog-delay").dialog({
+      autoOpen: false,
+      modal: true,
+      closeOnEscape: false
+    });               
+    dialog_saveas =   $( "#dialog-saveas" ).dialog({
+      autoOpen: false,
+     'width': 400,
+     'height': 600,
+      modal: true,
+      buttons: {
+          "Save" :  function() { 
+              var full_config = JSON.parse($("#config_json").val());
+              full_config.display_total = ($("#dialog-form3 input[name='display_total']:checked").val()=="on");
+if ($("#saveas_filters").prop("checked")) {
+} else{
+if (full_config.hasOwnProperty("pivot")) {
+                        delete full_config.pivot.exclusions;
+                        delete full_config.pivot.inclusions;
+                      } else {delete full_config.exclusions; }
+}
+
+     if (report_list==null) {
+     report_list = new Object;
+     report_list.reports = [];
+     }
+if (report_list.reports.findIndex(function(a){return a.name==$("#saveas").val()})!=-1) {
+report_list.reports.splice(report_list.reports.findIndex(function(a){return a.name==$("#saveas").val()}),1);
+}
+     report_list.reports.push({'name' : $("#saveas").val(), 'def' : JSON.stringify(full_config, undefined, 2)} );
+report_list.reports.sort(function(a,b) {return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);} ); 
+localStorage.setItem('report_list', JSON.stringify(report_list));         
+           //    GM_setValue($("#saveas").val(),JSON.stringify(full_config, undefined, 2) ); 
+           //    alert(GM_listValues());
+$('#DeleteReports').children('option').remove();
+                $('#SavedReports').children('option').remove();
+   $("#SavedReports").append("<option  value=\"blank\"></option>");
+$("#DeleteReports").append("<option  value=\"blank\"></option>");
+   // var report_list = GM_listValues();
+    for (var report in report_list.reports) {
+        $("#SavedReports").append("<option  value=\"reports\">"+report_list.reports[report].name+"</option>");
+$("#DeleteReports").append("<option  value=\"reports\">"+report_list.reports[report].name+"</option>");
+
+    }
+               dialog_saveas.dialog( "close" );
+          },
+          
+          
+          
+        "Close": function() {
+          dialog_saveas.dialog( "close" );
+        }
+      },
+      close: function() {
+      }
+    });
+   // 
+
+     
+      $( "#datepicker" ).datepicker();
+      $( "#datepicker" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+      $( "#progressbar" ).progressbar({ value: 0, max: 100 });
+     
+     
+     
+
+// initCharts is needed and without () to prevent the DOM being cleared.....LOL
+var options = {packages: ['corechart',"charteditor","timeline"], callback : initCharts};
+
+google.load('visualization', '1', options);
+      
+// }, false);
+
+////////
+(function() {
+    var callWithJQuery;
+
+    callWithJQuery = function(pivotModule) {
+        if (typeof exports === "object" && typeof module === "object") {
+            return pivotModule(require("jquery"));
+        } else if (typeof define === "function" && define.amd) {
+            return define(["jquery"], pivotModule);
+        } else {
+            return pivotModule(jQuery);
+        }
+    };
+    
+    callWithJQuery(function($) {
+        var makePDF2;
+        makePDF2 = function(chartType, extraOptions) {
+            return function(pivotData, opts) {
+                var aggregator, c, colAttrs, colKey, colKeys, defaults, i, j, r, result, rowAttrs, rowKey, rowKeys, spanSize, td, th, totalAggregator, tr, txt, val, x;
+                opts = $.extend(defaults, opts);
+               colAttrs = pivotData.colAttrs;
+               rowAttrs = pivotData.rowAttrs;
+               rowKeys = pivotData.getRowKeys();
+               colKeys = pivotData.getColKeys();
+              // log.console(chartType); 
+               spanSize = function(arr, i, j) {
+        var l, len, n, noDraw, ref, ref1, stop, x;
+        if (i !== 0) {
+          noDraw = true;
+          for (x = l = 0, ref = j; 0 <= ref ? l <= ref : l >= ref; x = 0 <= ref ? ++l : --l) {
+            if (arr[i - 1][x] !== arr[i][x]) {
+              noDraw = false;
+            }
+          }
+          if (noDraw) {
+            return -1;
+          }
+        }
+        len = 0;
+        while (i + len < arr.length) {
+          stop = false;
+          for (x = n = 0, ref1 = j; 0 <= ref1 ? n <= ref1 : n >= ref1; x = 0 <= ref1 ? ++n : --n) {
+            if (arr[i][x] !== arr[i + len][x]) {
+              stop = true;
+            }
+          }
+          if (stop) {
+            break;
+          }
+          len++;
+        }
+        return len;
+      };
+                
+      var outDoc, result;
+                
+      writeRotatedText = function(text,maxlen) {
+  var ctx, canvas = document.createElement('canvas');
+  
+  canvas.width = 40;
+  canvas.height = maxlen*25+10;
+  
+  ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'white';
+  ctx.rect(0, 0, canvas.width, canvas.height);
+  ctx.fill();
+  ctx.fillStyle = '#FFF';
+  ctx.font = '29pt Arial';
+  ctx.save();
+  ctx.translate(36, 10+maxlen*25);
+  ctx.rotate(-0.5*Math.PI);
+  ctx.fillStyle = "#000";
+  
+  ctx.fillText(text , 0, -5);
+  ctx.restore();
+  return canvas.toDataURL("image/jpeg");
+};
+      var today = new Date();
+      var dd = today.getDate();
+      var mm = today.getMonth()+1; //January is 0!
+      var yyyy = today.getFullYear();
+      var pdf_doc = new Object;
+      var pdf_header = new Object;
+      pdf_header.text = '\n\nExtracted from Online Scout Manager on '+dd+"."+mm+"."+yyyy;
+      pdf_header.margin = [20,0,0,0];
+      pdf_doc.header = pdf_header;
+      var pdf_table = new Object ;
+     var pdf_footer = function(currentPage, pageCount) {  return {text: currentPage.toString() + ' of ' + pageCount, alignment: 'center'}; };
+      pdf_doc.footer = pdf_footer;
+      pdf_table.table = new Object;
+      if (($("#disp_totals_ck").prop("checked"))) {
+pdf_table.table.headerRows = pivotData.colAttrs.length + 1;
+      } 
+else
+      {
+      if (pivotData.rowAttrs.length==0){ 
+      pdf_table.table.headerRows = pivotData.colAttrs.length;
+      } else {pdf_table.table.headerRows = pivotData.colAttrs.length + 1;}
+      }
+      pdf_table.table.body = new Array;
+       hasProp = {}.hasOwnProperty;    
+      for (j in colAttrs) {
+        if (!hasProp.call(colAttrs, j)) continue;
+        c = colAttrs[j];
+        var max_len = 0;
+        for (maxloop in colAttrs) {
+            if (max_len < colAttrs[maxloop].length) max_len = colAttrs[maxloop].length;
+        }
+     //   var max_len = colAttrs.sort(function (a, b) { return b.length - a.length; })[0].length;
+        var table_row = new Array;  
+        //tr = document.createElement("tr");
+        if (parseInt(j) === 0 && rowAttrs.length !== 0) {
+         // th = document.createElement("th");
+         // th.setAttribute("colspan", rowAttrs.length);
+         // th.setAttribute("rowspan", colAttrs.length);
+         // tr.appendChild(th);
+          var pdf_table_cell = new Object;
+          pdf_table_cell.text = ""
+          pdf_table_cell.colSpan = pivotData.rowAttrs.length;
+          pdf_table_cell.rowSpan = pivotData.colAttrs.length;
+          table_row.push(pdf_table_cell)     
+          for (var i in rowAttrs) {
+              var pdf_table_cell = new Object;
+              pdf_table_cell.text = ""
+              if (parseInt(i)!= pivotData.rowAttrs.length-1) {
+              table_row.push(pdf_table_cell)     
+              }
+          }
+        }
+        if (parseInt(j) != 0 && rowAttrs.length !== 0) {
+        for (var i in rowAttrs) {
+         var pdf_table_cell = new Object;
+              pdf_table_cell.text = ""
+              table_row.push(pdf_table_cell)     
+        }     
+        }
+        var pdf_table_cell = new Object;
+        var rotate_this = 0;
+        $("#reportoutput").find('input.pvtrotate:checked').each(function() {
+            if ( $(this).data("rotate")[0]==colAttrs[j] ) {
+                rotate_this = 1;
+            }
+        });
+
+        if (rotate_this==1) {
+        var tableBody =  [ [{image: writeRotatedText(c,max_len), fit:[7*($( "input[name=display_size" ).val())/6,max_len*$( "input[name=display_size" ).val()], alignment: 'center'}]];
+        pdf_table_cell.stack = tableBody;
+       
+        } else
+        {
+          pdf_table_cell.text = c;
+        }
+          
+      //  
+        table_row.push(pdf_table_cell)       
+        //th = document.createElement("th");
+        //th.className = "pvtAxisLabel";
+        //th.innerHTML = c;
+        //tr.appendChild(th);
+        
+        max_len = 0;
+        for (maxloop in colKeys) {
+            if (max_len < colKeys[maxloop][j].toString().length) max_len = colKeys[maxloop][j].toString().length;
+        }
+   //     var max_len = col_keys.sort(function (a, b) { return b[0].length - a[0].length; })[0][0].length;
+   //     colKeys.sort(  function (a, b) { return b[0] < a[0]; });
+        
+        var rotate_this = 0;
+        $("#reportoutput").find('input.pvtrotate:checked').each(function() {
+            if ( $(this).data("rotate")[0]==colAttrs[j] ) {
+                rotate_this = 1;
+            }
+        });
+        
+        for (i in colKeys) {
+          if (!hasProp.call(colKeys, i)) continue;
+          colKey = colKeys[i];
+          x = spanSize(colKeys, parseInt(i), parseInt(j));
+          if (x !== -1) {
+            var pdf_table_cell = new Object;
+            
+            if (rotate_this==1) {
+            var tableBody =  [ [{image: writeRotatedText(colKey[j].toString(),max_len), fit:[7*($( "input[name=display_size" ).val())/6,max_len*$( "input[name=display_size" ).val()],alignment: 'left'}]];
+             pdf_table_cell.stack = tableBody; 
+            } else
+             {
+            pdf_table_cell.text = colKey[j].toString(); 
+             };
+    //       
+            pdf_table_cell.colSpan = x;
+            //th = document.createElement("th");
+            //th.className = "pvtColLabel";
+            //th.innerHTML = colKey[j];
+            //th.setAttribute("colspan", x);
+            if (parseInt(j) === colAttrs.length - 1 && rowAttrs.length !== 0) {
+            //  th.setAttribute("rowspan", 2);
+            pdf_table_cell.rowSpan = 2;
+            } 
+            table_row.push(pdf_table_cell)      
+            //tr.appendChild(th);
+          } else
+          {
+              var pdf_table_cell = new Object;
+              pdf_table_cell.text = "";
+              table_row.push(pdf_table_cell)      
+          }
+        }          
+        if ((parseInt(j) === 0)&($("#disp_totals_ck").prop("checked"))) {
+           var pdf_table_cell = new Object;
+            pdf_table_cell.text = 'Total'; 
+            pdf_table_cell.rowSpan = colAttrs.length + (rowAttrs.length === 0 ? 0 : 1);
+            table_row.push(pdf_table_cell) 
+          //th = document.createElement("th");
+          //th.className = "pvtTotalLabel";
+          //th.innerHTML = opts.localeStrings.totals;
+          //th.setAttribute("rowspan", colAttrs.length + (rowAttrs.length === 0 ? 0 : 1));
+          //tr.appendChild(th);
+        }
+        //result.appendChild(tr);
+        pdf_table.table.body.push(table_row)  
+      }        
+      
+      if (rowAttrs.length !== 0) {
+        //tr = document.createElement("tr");
+        var table_row = new Array;
+        
+        for (i in rowAttrs) {
+          if (!hasProp.call(rowAttrs, i)) continue;
+          r = rowAttrs[i];
+          var pdf_table_cell = new Object;  
+          pdf_table_cell.text = r.toString(); 
+          table_row.push(pdf_table_cell) 
+          //th = document.createElement("th");
+          //th.className = "pvtAxisLabel";
+          //th.innerHTML = r;
+          //tr.appendChild(th);
+        }
+        if (colKeys.length>0) {
+        var pdf_table_cell = new Object;  
+            pdf_table_cell.text = ""; 
+            table_row.push(pdf_table_cell)   // The blank Cell under the Column Header  
+        };
+        for (j in colKeys) {
+            var pdf_table_cell = new Object;  
+            pdf_table_cell.text = ""; 
+            table_row.push(pdf_table_cell)   
+        }
+        //th = document.createElement("th");
+        var pdf_table_cell = new Object;  
+        pdf_table_cell.text = ""; 
+        if ((colAttrs.length === 0)&($("#disp_totals_ck").prop("checked"))) {
+          pdf_table_cell.text = "Total"; 
+          table_row.push(pdf_table_cell) 
+          //th.className = "pvtTotalLabel";
+          //th.innerHTML = opts.localeStrings.totals;
+        }
+    //    table_row.push(pdf_table_cell) 
+        pdf_table.table.body.push(table_row)  
+        //result.appendChild(tr);
+      }
+      for (i in rowKeys) {
+        if (!hasProp.call(rowKeys, i)) continue;
+        rowKey = rowKeys[i];
+        var table_row = new Array;
+      //  tr = document.createElement("tr");  
+        for (j in rowKey) {
+          if (!hasProp.call(rowKey, j)) continue;
+          txt = rowKey[j].toString();
+          x = spanSize(rowKeys, parseInt(i), parseInt(j));
+          if (x !== -1) {
+            var pdf_table_cell = new Object;    
+//            th = document.createElement("th");
+//            th.className = "pvtRowLabel";
+//            th.innerHTML = txt;
+            pdf_table_cell.text = txt;
+            pdf_table_cell.rowSpan = x;  
+            // th.setAttribute("rowspan", x);
+            if (parseInt(j) === rowAttrs.length - 1 && colAttrs.length !== 0) {
+             // th.setAttribute("colspan", 2);
+              pdf_table_cell.colSpan = 2;    
+              table_row.push(pdf_table_cell)    
+            }
+           // tr.appendChild(th);
+            table_row.push(pdf_table_cell)    
+          } else
+          {
+              var pdf_table_cell = new Object;    
+              pdf_table_cell.text = "";
+              table_row.push(pdf_table_cell)    
+          }
+        }
+        for (j in colKeys) {
+          if (!hasProp.call(colKeys, j)) continue;
+          colKey = colKeys[j];
+          aggregator = pivotData.getAggregator(rowKey, colKey);
+          val = aggregator.value();
+          var pdf_table_cell = new Object;    
+          //td = document.createElement("td");
+          //td.className = "pvtVal row" + i + " col" + j;
+          //td.innerHTML = aggregator.format(val);
+          pdf_table_cell.text  = aggregator.format(val);
+          //td.setAttribute("data-value", val);
+          //tr.appendChild(td);
+           table_row.push(pdf_table_cell)    
+        }
+          if (($("#disp_totals_ck").prop("checked"))) {          
+        totalAggregator = pivotData.getAggregator(rowKey, []);
+        val = totalAggregator.value();
+         var pdf_table_cell = new Object;
+         pdf_table_cell.text  =  totalAggregator.format(val);
+         table_row.push(pdf_table_cell)
+         }
+         pdf_table.table.body.push(table_row)  
+        //td = document.createElement("td");
+        //td.className = "pvtTotal rowTotal";
+        //td.innerHTML = totalAggregator.format(val);
+        //td.setAttribute("data-value", val);
+        //td.setAttribute("data-for", "row" + i);
+        //tr.appendChild(td);
+        //result.appendChild(tr);
+      }
+      var table_row = new Array;
+      if ($("#disp_totals_ck").prop("checked")) {
+      var pdf_table_cell = new Object; 
+      pdf_table_cell.text = "Total"
+      pdf_table_cell.colSpan = rowAttrs.length + (colAttrs.length === 0 ? 0 : 1)
+      table_row.push(pdf_table_cell);
+      }
+      if (colKeys.length>0) {
+      for (i in rowAttrs) {
+       var pdf_table_cell = new Object; 
+       pdf_table_cell.text = ""   
+        table_row.push(pdf_table_cell)
+      } } else
+      {
+          for (var i = 0; i< rowAttrs.length + (colAttrs.length === 0 ? 0 : 1) - 1 ; i++) {
+      
+          var pdf_table_cell = new Object; 
+       pdf_table_cell.text = ""   
+        table_row.push(pdf_table_cell)
+          }
+      }
+      //tr = document.createElement("tr");
+      //th = document.createElement("th");
+      //th.className = "pvtTotalLabel";
+      //th.innerHTML = opts.localeStrings.totals;
+      //th.setAttribute("colspan", rowAttrs.length + (colAttrs.length === 0 ? 0 : 1));
+      //tr.appendChild(th);
+      if (($("#disp_totals_ck").prop("checked"))) {
+      for (j in colKeys) {
+        if (!hasProp.call(colKeys, j)) continue;
+        colKey = colKeys[j];
+        totalAggregator = pivotData.getAggregator([], colKey);
+        val = totalAggregator.value();
+        if (($("#disp_totals_ck").prop("checked"))) {   
+        var pdf_table_cell = new Object;   
+        pdf_table_cell.text = totalAggregator.format(val);
+        table_row.push(pdf_table_cell)
+        };
+        //td = document.createElement("td");
+        //td.className = "pvtTotal colTotal";
+        //td.innerHTML = totalAggregator.format(val);
+        //td.setAttribute("data-value", val);
+        //td.setAttribute("data-for", "col" + j);
+        //tr.appendChild(td);
+      }
+      totalAggregator = pivotData.getAggregator([], []);
+      val = totalAggregator.value();
+     // td = document.createElement("td");
+     // td.className = "pvtGrandTotal";
+     // td.innerHTML = totalAggregator.format(val);
+    //  td.setAttribute("data-value", val);
+    //  tr.appendChild(td);
+        var pdf_table_cell = new Object;   
+        pdf_table_cell.text = totalAggregator.format(val);
+        table_row.push(pdf_table_cell)
+      }
+ if ($("#disp_totals_ck").prop("checked")) {
+         pdf_table.table.body.push(table_row)
+}  
+   //   result.appendChild(tr);          
+   //             fullAggName = pivotData.aggregatorName;
+                
+               
+                pdf_doc.content = pdf_table;
+                 pdf_doc.pageSize =  $( "select[name=page_size" ).val();
+   pdf_doc.pageOrientation =  $( "select[name=page_orient" ).val(); 
+                var defaultStyle = new Object;
+                defaultStyle.fontSize = defaultStyle.fontSize = $( "input[name=display_size" ).val();
+                pdf_doc.defaultStyle = defaultStyle;
+        
+                //pdf_base
+
+   //             pdf_doc_copy = $.extend(true, {}, pdf_doc);
+pdf_doc_copy = $.extend(true, {}, pdf_doc);
+                 if (chartType=="Download") {
+                   pdfMake.createPdf(pdf_doc).download();
+                } else {
+                pdfMake.createPdf(pdf_doc).getDataUrl(function(outDoc) {
+                $("#pdf_viewer").attr("src", outDoc);
+                });}
+                result = "<iframe id=\"pdf_viewer\" width=100% style = \"min-width: 700px; height: 800px;\"><iframe>";    
+                return result;
+            };
+        };
+        return $.pivotUtilities.pdf_renderers = {
+            "PDF": makePDF2("LineChart"),
+            "Download PDF": makePDF2("Download"),
+        };
+    });
+
+}).call(this);
+
+//# sourceMappingURL=gchart_renderers.js.map
+///////
+function slick_pdf() {
+ var groupings  = dataView.getGrouping();
+     var table_row = new Array; 
+    var pdf_doc = new Object;
+
+var today = new Date();
+      var dd = today.getDate();
+      var mm = today.getMonth()+1; //January is 0!
+      var yyyy = today.getFullYear();
+
+ var pdf_header = new Object;
+      pdf_header.text = '\n\nExtracted from Online Scout Manager on '+dd+"."+mm+"."+yyyy;
+      pdf_header.margin = [20,0,0,0];
+      pdf_doc.header = pdf_header;
+      
+     var pdf_footer = function(currentPage, pageCount) {  return {text: currentPage.toString() + ' of ' + pageCount, alignment: 'center'}; };
+      pdf_doc.footer = pdf_footer;
+
+      var pdf_table = new Object ;
+      pdf_table.table = new Object;
+      pdf_table.table.headerRows = 1;
+      pdf_table.table.body = new Array;
+      var table_row = new Array;  
+      for (var j in grid.getColumns()) {
+        table_row.push(grid.getColumns()[j].name);
+      }
+      pdf_table.table.body.push(table_row);
+      for (var j=0; j < dataView.getLength(); j++) {
+      table_row = []; 
+      var rowitem = dataView.getItem(j);
+      if (rowitem.hasOwnProperty("__group")) {
+           for (var k in grid.getColumns()) {
+           if (k==0) {
+               var pdf_table_cell = new Object;
+               pdf_table_cell.text = groupings[rowitem.level].getter+":"+rowitem.value;
+if ($("#disp_totals_ck").prop("checked")) { 
+pdf_table_cell.text = pdf_table_cell.text + "   ("+rowitem.count+")";
+};
+               pdf_table_cell.colSpan =  grid.getColumns().length;
+               table_row.push(pdf_table_cell);
+           } else
+           {
+               table_row.push(" ");
+           }
+           }
+      } else
+      {
+       for (var k in grid.getColumns()) {
+        //var prop = grid.getColumns()[j].name;
+         var pdf_table_cell = new Object;
+         pdf_table_cell.text = rowitem[(grid.getColumns()[k].name)].toString()
+         table_row.push(pdf_table_cell);
+     //   table_row.push(rowitem[(grid.getColumns()[k].name)]);
+      }  
+      }
+      pdf_table.table.body.push(table_row);    
+      }
+   pdf_doc.content = pdf_table;
+    pdf_doc.pageSize =  $( "select[name=page_size" ).val();
+   pdf_doc.pageOrientation =  $( "select[name=page_orient" ).val(); 
+                var defaultStyle = new Object;
+                defaultStyle.fontSize = defaultStyle.fontSize = $( "input[name=display_size" ).val();
+                pdf_doc.defaultStyle = defaultStyle;
+        
+                //pdf_base
+//var pdf_doc_copy = new Object;
+//pdf_doc_copy = Object.assign({}, pdf_doc);        
+pdf_doc_copy = $.extend(true, {}, pdf_doc);
+if ($(".slickot option:selected").text()=="PDF") {
+        pdfMake.createPdf(pdf_doc).getDataUrl(function(outDoc) {
+                $("#pdf_viewer").attr("src", outDoc);
+                });
+                $("#reportoutput2").html("<iframe id=\"pdf_viewer\" width=100% style = \"min-width: 700px; height: 800px;\"><iframe>");
+} else
+{
+ pdfMake.createPdf(pdf_doc).download();
+}
+}
+
+function report_saveas() {
+menu_closeNav();
+$("#saveas_list").html("");
+var save_html=""
+if (report_list!=null) {
+for (var report in report_list.reports) {
+        save_html = save_html + "<a href='#'><span class='saveas_list_item'>"+report_list.reports[report].name+"</span></a><br>";
+
+//.val('"+ report_list.reports[report].name +"')'>"+report_list.reports[report].name + "</span></a><br>"; 
+    }
+}
+$("#saveas_list").html(save_html);
+
+$(".saveas_list_item").click(function(e){$('#saveas').val($(this).html())});
+
+$( "#dialog-saveas" ).dialog( "option", "position",{ my: "center", at: "center top+400", of: window, collision: "fit" } );
+    dialog_saveas.dialog("open");
+}
+function delete_report() {
+    if($("#DeleteReports option:selected").text()!="") {
+    $("#delete_confirm").text("Delete the Report "+$("#DeleteReports option:selected").text());
+    $("#delete_confirm").dialog({ position: {'my': 'center',  'at': 'center top+400', 'of': window } });
+    dialog_delete.dialog("open");
+    }
+}
+
+
+function do_xhr(url,f,p) {
+var osmpath = url.substring(37,url.indexOf("?"));
+url = relay_path +"?osmpath="+osmpath+"&"+url.substring(url.indexOf("?")+1,1000);
+p2 = [];
+if (security !== null ) {
+p2['secret'] = security.secret;
+p2['userid'] = security.userid;
+}
+
+
+var obj = $.extend({}, p2);
+ $.post(url,$.param(obj),function(data,status){
+            f(data);
+        });
+
+}
+
+
+
+  
+
+
+
+
+function do_xhr2(url,f,p) {
+
+var osmpath = url.substring(37,url.indexOf("?"));
+
+url = relay_path +"?osmpath="+osmpath+"&"+url.substring(url.indexOf("?")+1,1000);
+if (security !== null ) {
+p=[];
+p['secret'] = security.secret;
+p['userid'] = security.userid;
+
+
+}
+
+var obj = $.extend({}, p);
+ 
+var request = $.ajax({
+  url: url,
+  method: "GET",
+  data: $.param(obj),
+  dataType: "json"
+});
+request.done(function( msg ) {
+  f(msg);
+});
+
+
+}
+
+function do_xhr_post(url,f,p) {
+var osmpath = url.substring(37,url.indexOf("?"));
+url = relay_path +"?osmpath="+osmpath+"&"+url.substring(url.indexOf("?")+1,1000);
+
+if (security !== null ) {
+p['secret'] = security.secret;
+p['userid'] = security.userid;
+}
+
+
+var obj = $.extend({}, p);
+$.ajax({
+			url: url,
+			type: 'POST',
+                        crossDomain: true,
+			data: $.param(obj),
+			success: function(data,status){f(data);},
+                        error: function (responseData, textStatus, errorThrown) {
+        alert('POST failed.'); }
+		});
+
+
+// $.post(url,$.param(obj),function(data,status){
+//            f(data);
+//        },"json");
+
+}
+
+function menu_openNav() {
+    document.getElementById("mySidenav").style.width = "250px";
+}
+
+function menu_closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+}
+
+function log_out() {
+if (security!=null) {
+  security = null;
+   sections="";
+report_config= [];
+section_config = [];
+ old_report_config = {};
+get_data_array = [];
+report_data = [];
+$("#osmr_logon").toggle("slow");
+$("#osmr_loggedon").toggle("slow");
+$("#reportoutput_about").toggle();
+$("#reportoutput").html("");
+ 
+}
+menu_closeNav();
+}
+
+
+function call_report () {
+ sections="";
+$("#dialog-delay").dialog({ position: {'my': 'center',  'at': 'center top+300', of: window } });
+dialog_delay.dialog( "open" );
+$("#reportoutput_about").toggle();
+if ($("#osmr_logon").is(":visible")) { 
+$("#osmr_logon").toggle("slow");
+$("#osmr_loggedon").toggle("slow");
+}
+$.ajaxSetup({
+    async: false
+});
+$.getJSON( "osmr_config.json", function( data ) { 
+api_number = data.api;
+relay_path = data.relay; 
+});
+$.ajaxSetup({
+    async: true
+});
+   // var report_list = GM_listValues();
+report_list = JSON.parse(localStorage.getItem('report_list'));
+if (report_list!=null) {
+if (report_list.reports.length > 0) {
+report_list.reports.sort(function(a,b) {return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);} ); 
+   $('#SavedReports').children('option').remove();
+    $("#SavedReports").append("<option  value=\"blank\"></option>");
+  $('#DeleteReports').children('option').remove();
+    $("#DeleteReports").append("<option  value=\"blank\"></option>");
+//   for (var report in report_list) {
+//       $("#SavedReports").append("<option  value=\"reports\">"+report_list[report]+"</option>");
+//$("#DeleteReports").append("<option  value=\"reports\">"+report_list[report]+"</option>");
+
+//    }
+}}
+  var parameters = [];
+
+  parameters['email'] = $("#username").val();
+  parameters['password'] = $("#password").val();
+do_xhr_post('https://www.onlinescoutmanager.co.uk/users.php?action=authorise',get_sections,parameters);
+}
+
+function get_sections(text) {
+  security = JSON.parse(text);
+  if (security.secret == null)
+  {
+    $("#confirmation").text("Unable to Logon");
+        dialog_confirm.dialog({ title: "Message" });
+$("#dialog-confirm").dialog({ position: {'my': 'center',  'at': 'center top+400, of:window' } });
+        dialog_confirm.dialog("open");
+        dialog_delay.dialog("close");
+        if ($("#osmr_logon").is(":hidden")) { 
+          $("#osmr_logon").toggle();
+        };
+        if ($("#osmr_loggedon").is(":visible")) { 
+          $("#osmr_loggedon").toggle();
+        };  
+  } else {
+    do_xhr('https://www.onlinescoutmanager.co.uk/api.php?action=getSectionConfig',set_sections,"");
+  };
+};
+
+
+
+function set_sections(text) {
+    sections = text;
+  do_xhr('https://www.onlinescoutmanager.co.uk/api.php?action=getTerms',set_terms,"");
+    //do_xhr('https://www.onlinescoutmanager.co.uk/ext/settings/patrols/?action=get&sectionid=3320',set_patrols,"");
+};
+
+function set_terms(text) {
+    terms = text;
+    
+      do_xhr('https://www.onlinescoutmanager.co.uk/api.php?action=getUserRoles',set_roles,"");
+    //do_xhr('https://www.onlinescoutmanager.co.uk/ext/settings/patrols/?action=get&sectionid=3320',set_patrols,"");
+};
+
+function get_roles_section(section) {
+var property;
+for(property in roles_config) {
+if (roles_config[property].sectionid == section) {
+        return property;
+    }
+}
+}
+
+function do_api_setup(c) {
+var url = relay_path + '?osmpath=ext/settings/access/&action=getAPIAccess&sectionid='+Object.keys(section_config)[c];
+p2 = [];
+    if (security !== null ) {
+      p2['secret'] = security.secret;
+      p2['userid'] = security.userid;
+    }
+    var obj = $.extend({}, p2);
+    $.post(url,$.param(obj),function(data,status){
+         api_setup[Object.keys(section_config)[c]] = data;
+         c = c + 1;
+      if (c==Object.keys(section_config).length) {
+            api_settings_table_draw();
+      } else
+      {do_api_setup(c)};
+    });
+}
+
+
+function set_roles(text) {
+    roles = text;
+    section_config = JSON.parse(sections);
+    roles_config = JSON.parse(roles);
+    terms_config = JSON.parse(terms);
+    var obj = {};
+   
+$.ajax({
+            url: 'https://2ndnewhawscouts.org.uk/osmr/report_definitions.json?callback=callbackFnc',
+            dataType: 'JSONP',
+            jsonpCallback: 'callbackFnc',
+            type: 'GET',
+            async: false,
+            crossDomain: true,
+            success: function () { },
+            failure: function () { },
+            complete: function (data) {
+                template_report=data.responseJSON;select_sections();
+            }
+        });
+ 
+
+   
+
+//    $.get("https://2ndnewhawscouts.org.uk/osmr/report_definitions.json",obj,function(data,status){template_report=data;select_sections();})
+    var c = 0;   
+    
+    
+//do_api_setup(c);    
+//select_sections();
+}
+function select_sections() {
+  //  $("#checks").empty();
+$("select.section-select").empty();
+    for(var property in section_config) {
+       $("select.section-select").append("<option value=\""+property+"\">"+roles_config[get_roles_section(property)].sectionname+"</option>");
+  //  $("#checks").append("<input class=\"section_chk\" type=\"checkbox\"  name=\""+property+"\" value=\""+property+"\" id=\""+property+"\">"+roles_config[get_roles_section(property)].groupname+":"+roles_config[get_roles_section(property)].sectionname+"<BR>");    
+ga('send', 'event',  'Logon',security.userid, roles_config[get_roles_section(property)].groupname+":"+roles_config[get_roles_section(property)].sectionname);
+}
+    
+    $('#SavedReports').children('option').remove()
+   $("#SavedReports").append("<option  value=\"blank\"></option>");
+ $('#DeleteReports').children('option').remove()
+   $("#DeleteReports").append("<option  value=\"blank\"></option>");
+
+    //var report_list = GM_listValues();
+report_list = JSON.parse(localStorage.getItem('report_list'));
+if (report_list!=null) {
+if (report_list.reports.length > 0) {
+report_list.reports.sort(function(a,b) {return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);} ); 
+if (report_list!=null) {
+   for (var report in report_list.reports) {
+       $("#SavedReports").append("<option value=\"reports\">"+report_list.reports[report].name+"</option>");
+$("#DeleteReports").append("<option value=\"reports\">"+report_list.reports[report].name+"</option>");
+
+  }
+}}
+} else { var report_list = { 'reports' : [] }; };
+mstest.multipleSelect("refresh");
+select_sections_open();
+}
+function select_sections_open() {
+dialog_delay.dialog( "close" );
+//dialog.dialog( "open" );
+}
+function select_fields () {
+    if (security==null) {
+       $("#confirmation").text("You need to logon")
+        dialog_confirm.dialog({ title: "Message" });
+        dialog_confirm.dialog("open");
+        return;
+    }
+    if (mstest.multipleSelect("getSelects").length==0) {
+        $("#confirmation").text("You need to choose at least one section")
+        dialog_confirm.dialog({ title: "Message" });
+        dialog_confirm.dialog("open")
+    } else {
+     dialog.dialog( "close" );
+     dialog2.dialog( "open" );
+    if($("#SavedReports option:selected").text() != "") {
+         for (var report in report_list.reports) {
+        if (report_list.reports[report].name==$("#SavedReports option:selected").text()) {
+        var saved_report = JSON.parse(report_list.reports[report].def);
+         }
+         }
+         $( "#report_type" ).val(saved_report.report_type);
+        if (saved_report.hasOwnProperty("pivot")) {
+          $('input[name="outputtype"][value="pivot"]').prop('checked', true);
+           $("#pivottable").prop("checked", true);
+           $("#grid_menu_entry").html("Grid Layout");
+           $("#pivot_menu_entry").html("&#10004; Pivot Layout");
+
+        } else
+        {
+             $('input[name="outputtype"][value="grid"]').prop('checked', true);
+$("#gridtable").prop("checked", true);
+$("#grid_menu_entry").html("&#10004; Grid Layout");
+  $("#pivot_menu_entry").html("Pivot Layout");
+
+
+        }
+    }
+     $( "#progressbar" ).show();
+     $( ".progress-label" ).show();
+     $("#fieldlist").hide();
+    if(document.getElementById("refresh").checked==true) {
+        old_report_config = {};
+    } else {
+        old_report_config = $.extend(true, {}, report_config);    }
+    report_config = [];
+    for(var property in section_config) {
+        if(mstest.multipleSelect("getSelects").indexOf(property)>=0) {
+         //alert(property+"  checked");
+         for(var termnumber in terms_config[property]) {
+             if ((terms_config[property][termnumber].startdate <= datepicker.value) && (terms_config[property][termnumber].enddate >= datepicker.value)) {
+                 //alert(terms_config[property][termnumber].name);
+                 var report_def = new Object();
+                 report_def.termid = terms_config[property][termnumber].termid;
+                 report_config[property] = report_def;
+             }
+         }
+            if (roles_config[get_roles_section(property)].section=="waiting") {
+             var report_def = new Object();
+             report_def.termid = -1;
+            report_config[property] = report_def;    
+        }
+            if (report_config[property] == null){
+                $("#confirmation").text("Invalid Term for "+roles_config[get_roles_section(property)].sectionname+", no data will be selected")
+                dialog_confirm.dialog({ title: "Message" });
+                dialog_confirm.dialog( "open" );
+            }
+        } else
+        { //alert(property+"  not checked") 
+        }
+    }   
+    var report_type = $( "#report_type option:selected" ).text();
+    get_data_array = [];
+    get_data_array2 = [];
+    for(var section in report_config) {
+        if (report_type == "Badge Stock") {
+           var get_data_line = new Object();
+            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/badges/stock/?action=getBadgeStock&section='+section_config[section].section_type+'&section_id='+section+'&term_id='+report_config[section].termid+'&seeIfShared=y';
+            
+            get_data_line.data = report_config[section];
+            get_data_line.olddata = old_report_config[section];    
+            get_data_line.type = "GET";
+            get_data_line.field = "badge_stock";
+            get_data_array.push(get_data_line);
+        }
+        if ((report_type == "Members")|(report_type == "Members & Badges")|(report_type=="Events & Attendance")|(report_type == "Members & Badges Details")) {
+            var get_data_line = new Object();
+            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/settings/patrols/?action=get&sectionid='+section;
+            report_config[section].patrol = "";
+            report_config[section].members = "";
+            report_config[section].memberconfig = "";
+            report_config[section].flexiconfig = "";
+            get_data_line.data = report_config[section];
+            get_data_line.olddata = old_report_config[section];    
+            get_data_line.type = "GET";
+            get_data_line.field = "patrol";
+            get_data_array.push(get_data_line);
+            var get_data_line = new Object();
+            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/members/contact/grid/?action=getMembers';
+            get_data_line.data = report_config[section];
+            get_data_line.olddata = old_report_config[section];    
+            get_data_line.type = "POST";
+            get_data_line.field = "members";
+            get_data_line.postvar = "section_id="+section+"&term_id="+report_config[section].termid;
+            get_data_array.push(get_data_line);
+            var get_data_line = new Object();
+            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/members/flexirecords/?action=getFlexiRecords&sectionid='+section+'&archived=n';
+            get_data_line.data = report_config[section];
+            get_data_line.olddata = old_report_config[section];    
+            get_data_line.type = "GET";
+            get_data_line.field = "flexiconfig";
+            get_data_array.push(get_data_line);
+
+        //ext/members/flexirecords/?action=getFlexiRecords&sectionid='.$ss_value.'&archived=n
+        // alert(section + " " + report_config[section].termid);
+        }
+        if ((report_type == "Members & Badges")|(report_type == "Badges")|(report_type == "Members & Badges Details")) {
+            for(var i = 1; i < 5;  i++) {
+//for(var i = 1; i < 2;  i++) {
+            report_config[section].badges = new Array();
+            report_config[section].memberbadges = "";
+            var get_data_line = new Object();
+            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/badges/records/?action=getBadgeStructureByType&a=1&section='+section_config[section].section_type+'&term_id='+report_config[section].termid+"&section_id="+section+"&type_id="+i;
+            get_data_line.data = report_config[section];
+            get_data_line.olddata = old_report_config[section];    
+            get_data_line.type = "GET";
+            get_data_line.field = "badges|"+i;
+            get_data_array.push(get_data_line);
+            } 
+            if ((report_type == "Members & Badges")|(report_type == "Members & Badges Details")) {
+            var get_data_line = new Object();
+            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/badges/badgesbyperson/?action=loadBadgesByMember&section='+section_config[section].section_type+'&sectionid='+section+'&term_id='+report_config[section].termid;
+            get_data_line.data = report_config[section];
+            get_data_line.olddata = old_report_config[section];    
+            get_data_line.type = "GET";
+            get_data_line.field = "memberbadges";
+            get_data_array.push(get_data_line);
+            }
+        }
+        if ((report_type == "Events")|(report_type=="Events & QM Lists")|(report_type=="Events & Attendance")) {
+            report_config[section].events = "";
+            var get_data_line = new Object();
+            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/events/summary/?action=get&sectionid='+section+'&termid='+report_config[section].termid;
+            get_data_line.data = report_config[section];
+            get_data_line.olddata = old_report_config[section];    
+            get_data_line.type = "GET";
+            get_data_line.field = "events";
+            get_data_array.push(get_data_line);
+            }
+    }
+    
+    $( ".progressbar" ).text = "Loading Data";
+    if (get_data_array[0].type == "GET") {
+        get_data_xhr(0,assemble_data) } else {get_data_post_xhr(0,assemble_data) }; 
+    }
+}
+
+function assemble_data() {
+// Called after select fields (whic collects some of the data needed for this process
+// This routine needs to collect the config data for member fields and Flexi-records as we need a member_id and a id for these
+//    alert("Hello");
+    get_data_array=[];
+    get_data_array2=[];
+    $( "#progressbar" ).progressbar({ value: false } );
+     $( ".progress-label" ).text('Round 2');
+     var report_type = $( "#report_type option:selected" ).text();
+    for(var section in report_config) {
+        if ((report_type=="Members")|(report_type=="Members & Badges")|(report_type=="Members & Badges Details")|(report_type=="Events & Attendance")) {
+        var members_array = JSON.parse(report_config[section].members);
+        for (var scout in members_array.data) {
+           // alert(members_array.data[scout].first_name);
+           var get_data_line = new Object();
+            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/customdata/?action=getData&section_id='+section;
+            get_data_line.data = report_config[section];
+            get_data_line.type = "POST";
+            get_data_line.field = "memberconfig";
+            get_data_line.postvar = 'associated_type=member&context=members&associated_id='+members_array.data[scout].member_id;
+            get_data_array.push(get_data_line);
+            break;
+        };
+        if (report_config[section].hasOwnProperty("flexiconfig")==true) {
+        if (report_config[section].flexiconfig!="") {
+        var flex_cfg_array = JSON.parse(report_config[section].flexiconfig);
+        if (flex_cfg_array.items.length > 0) {
+        report_config[section].flexirecords = new Array();
+        report_config[section].flexifields = new Array();
+        }
+        for(var flexi in flex_cfg_array.items) {
+            var get_data_line = new Object();
+            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/members/flexirecords/?action=getData&extraid='+flex_cfg_array.items[flexi].extraid+'&sectionid='+section+'&termid='+report_config[section].termid+'&section='+section_config[section].section_type;
+            get_data_line.data = report_config[section];
+            get_data_line.olddata = old_report_config[section];    
+            get_data_line.type = "GET";
+            get_data_line.field = "flexirecords|"+flex_cfg_array.items[flexi].extraid;
+            get_data_array.push(get_data_line);
+             var get_data_line = new Object();
+            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/members/flexirecords/?action=getStructure&sectionid='+section+'&extraid='+flex_cfg_array.items[flexi].extraid;
+            get_data_line.data = report_config[section];
+            get_data_line.olddata = old_report_config[section];    
+            get_data_line.type = "GET";
+            get_data_line.field = "flexifields|"+flex_cfg_array.items[flexi].extraid;
+            get_data_array.push(get_data_line);
+        }
+        }
+      }
+      }
+        //https://www.onlinescoutmanager.co.uk/ext/quartermaster/eventbookings/?action=loadListsForEvent&eventid=130344&section=scouts&sectionid=3320
+        if (report_type=="Events & QM Lists") {
+            report_config[section].eventqm = new Array();
+            var el =  JSON.parse(report_config[section].events);
+            for (var ev in el.items) {
+                if (el.items[ev].startdate  >= datepicker.value) {
+              var get_data_line = new Object();
+            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/quartermaster/eventbookings/?action=loadListsForEvent&eventid='+el.items[ev].eventid+'&section=scouts&sectionid='+section;
+            get_data_line.data = report_config[section];
+            get_data_line.olddata = old_report_config[section];    
+            get_data_line.type = "GET";
+            get_data_line.field = "eventqm|"+el.items[ev].eventid;
+            get_data_array.push(get_data_line);  
+                }
+            }
+        }
+        if (report_type=="Events & Attendance") {
+         report_config[section].eventcfg = new Array();
+         report_config[section].eventatt = new Array();
+            var el =  JSON.parse(report_config[section].events);
+            for (var ev in el.items) {
+            if (el.items[ev].startdate  >= datepicker.value) {
+              var get_data_line = new Object();
+            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/events/event/?action=getStructureForEvent&eventid='+el.items[ev].eventid+'&sectionid='+section;
+            get_data_line.data = report_config[section];
+            get_data_line.olddata = old_report_config[section];    
+            get_data_line.type = "GET";
+            get_data_line.field = "eventcfg|"+el.items[ev].eventid;
+            get_data_array.push(get_data_line); 
+            var get_data_line = new Object();
+            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/events/event/?action=getAttendance&eventid='+el.items[ev].eventid+'&sectionid='+section+"&termid="+report_config[section].termid;
+            get_data_line.data = report_config[section];
+            get_data_line.olddata = old_report_config[section];    
+            get_data_line.type = "GET";
+            get_data_line.field = "eventatt|"+el.items[ev].eventid;
+            get_data_array.push(get_data_line);      
+            }
+            }
+        }   
+    }
+
+   if (report_type=="Members & Badges Details") {
+      report_config[section].badgereq = new Array();
+      for(var section in report_config) {
+        for(var bt in report_config[section].badges) {
+          var bl = JSON.parse(report_config[section].badges[bt]); 
+          for(var bd in bl.details) {
+
+            var get_data_line = new Object();
+            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/badges/records/?action=getBadgeRecords&term_id='+report_config[section].termid+'&section='+section_config[section].section_type+"&badge_id="+bl.details[bd].badge_id+"&section_id="+section+"&badge_version="+bl.details[bd].badge_version;
+            get_data_line.data = report_config[section];
+            get_data_line.olddata = old_report_config[section];    
+            get_data_line.type = "GET";
+            
+            get_data_line.field = "badgereq|"+bl.details[bd].badge_identifier;
+            get_data_array.push(get_data_line);
+
+
+
+          }
+        }
+      }
+    }
+
+    if(get_data_array.length>0) {
+        if (get_data_array[0].type == "POST" ) {
+    get_data_post_xhr(0,assemble_data2);
+        } else {get_data_xhr(0,assemble_data2)};
+    } else {assemble_data2()}
+    
+}
+
+function is_checked(a,v) {
+    for (var l in a) {
+        if (a[l]==v) { return " checked " }
+    }
+    return "";
+}
+function assemble_data2() {
+    var field_list = "<div id=\"fieldtable\">Select the fields for your report from the list below<br><br>";
+    field_list = field_list + "<a id=\"expandList\" class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover\">Expand All</a>";
+    field_list = field_list + "<a id=\"collapseList\" class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover\">Collapse All</a><ul id = \"expList\">";
+    var core_fields = true;
+   
+    var core_field_list = [ { "fieldname" : "MC|Core|first_name" , "fieldlabel" : "First Name" },
+                            { "fieldname" : "MC|Core|last_name" ,  "fieldlabel" : "Last Name"},
+                           { "fieldname" : "MC|Core|full_name" ,  "fieldlabel" : "Full Name"},
+                           { "fieldname" : "MC|Core|patrol" ,  "fieldlabel" : "Patrol"},
+                           { "fieldname" : "MC|Core|joined" ,  "fieldlabel" : "Date Joined"},
+                           { "fieldname" : "MC|Core|started" ,  "fieldlabel" : "Date Started"},
+                           { "fieldname" : "MC|Core|date_of_birth" ,  "fieldlabel" : "Date of Birth"},
+                           { "fieldname" : "MC|Core|birth_month" ,  "fieldlabel" : "Month of Birth"},
+                           { "fieldname" : "MC|Core|age" ,  "fieldlabel" : "Age"},
+                           { "fieldname" : "MC|Core|age_years" ,  "fieldlabel" : "Age in Years"},
+                           { "fieldname" : "MC|Core|full_age" ,  "fieldlabel" : "Age Detailed"},
+                           { "fieldname" : "MC|Core|patrol_role_level" ,  "fieldlabel" : "Role ID"},
+                           { "fieldname" : "MC|Core|patrol_role_level_label" ,  "fieldlabel" : "Patrol Role"},
+                           { "fieldname" : "MC|Core|patrol_role_short" ,  "fieldlabel" : "Short Role"},
+                            { "fieldname" : "MC|Core|section_name" ,  "fieldlabel" : "Section Name"},
+                           { "fieldname" : "MC|Core|group_name" ,  "fieldlabel" : "Group Name"},
+                           { "fieldname" : "MC|Core|timemovement" ,  "fieldlabel" : "Time as a Scout"}
+
+
+                          ];
+     
+    var badge_field_list = [
+        { "fieldname" : "BG|Badge|name", "fieldlabel" : "Badge Name" },
+        { "fieldname" : "BG|Badge|group_name", "fieldlabel" : "Badge Group Name" },
+        { "fieldname" : "BG|Badge|description", "fieldlabel" : "Badge Description" },
+        { "fieldname" : "BG|Badge|badge_type", "fieldlabel" : "Badge Type" },
+        { "fieldname" : "BG|Badge|badge_id", "fieldlabel" : "Badge ID" },
+        { "fieldname" : "BG|Badge|badge_section", "fieldlabel" : "Section for Badge" }
+                           ];
+     
+    var bm_field_list = [
+        { "fieldname" : "BM|Badge|awarded", "fieldlabel" : "Badge Awarded" },
+        { "fieldname" : "BM|Badge|awarded_date", "fieldlabel" : "Date Awarded" },
+        { "fieldname" : "BM|Badge|status", "fieldlabel" : "% Complete" },
+        { "fieldname" : "BM|Badge|completed", "fieldlabel" : "Completed" }
+        ];
+    var bm_field_detail_list = [
+        { "fieldname" : "BD|Badge|name", "fieldlabel" : "Short Requirement" },
+        { "fieldname" : "BD|Badge|tooltip", "fieldlabel" : "Long Requirement" },
+        { "fieldname" : "BD|Badge|module", "fieldlabel" : "Section/Level" },
+        { "fieldname" : "BD|Badge|reqstatus", "fieldlabel" : "Member Status" }
+        ];
+    var bs_field_list = [
+          { "fieldname" : "BS|Badge|name", "fieldlabel" : "Badge Name" },
+{ "fieldname" : "BS|Badge|due", "fieldlabel" : "Badges Due" },
+{ "fieldname" : "BS|Badge|stock", "fieldlabel" : "Badge Stock" },
+{ "fieldname" : "BS|Badge|buy", "fieldlabel" : "Badges to Buy" }
+         ];
+    var ev_field_list = [
+        { "fieldname" : "EV|Event|cost", "fieldlabel" : "Cost" },
+        { "fieldname" : "EV|Event|date", "fieldlabel" : "Start Date" },
+        { "fieldname" : "EV|Event|enddate", "fieldlabel" : "End Date" },
+        { "fieldname" : "EV|Event|name", "fieldlabel" : "Event Name" },
+        { "fieldname" : "EV|Event|location", "fieldlabel" : "Location" },
+        { "fieldname" : "EV|Event|group", "fieldlabel" : "Group Name" },
+        { "fieldname" : "EV|Event|section", "fieldlabel" : "Section Name" },
+        { "fieldname" : "EV|Event|yes", "fieldlabel" : "Attending" },
+        { "fieldname" : "EV|Event|no", "fieldlabel" : "Not Attending" }       
+        ];
+    var ev_att_list = [
+        { "fieldname" : "EA|Event|attending", "fieldlabel" : "Attending" },
+        { "fieldname" : "EA|Event|payment", "fieldlabel" : "Payment" },
+         { "fieldname" : "EA|Event|firstname", "fieldlabel" : "First Name" },
+        { "fieldname" : "EA|Event|lastname", "fieldlabel" : "Last Name" },
+        { "fieldname" : "EA|Event|startage", "fieldlabel" : "Age at Start" },
+        { "fieldname" : "EA|Event|startages", "fieldlabel" : "Age @ Start" }
+        ]
+   var qm_field_list = [
+        { "fieldname" : "QL|List|name", "fieldlabel" : "QM List" },
+        { "fieldname" : "QI|Item|name", "fieldlabel" : "QM Item" },
+        { "fieldname" : "QI|Item|available", "fieldlabel" : "Qty Available" },
+        { "fieldname" : "QI|Item|booked", "fieldlabel" : "Qty Booked" },
+        { "fieldname" : "QI|Item|broken", "fieldlabel" : "Qty Broken" },
+       { "fieldname" : "QI|Item|condition", "fieldlabel" : "Condition" },
+       { "fieldname" : "QI|Item|description", "fieldlabel" : "Description" },
+       { "fieldname" : "QI|Item|quantity", "fieldlabel" : "Total Qty" },
+       { "fieldname" : "QI|Item|location", "fieldlabel" : "Location" }
+        ]; 
+    var searchIDs = $('#fieldtable input:checked').map(function(){
+        
+      return $(this).val();
+        
+    });
+    var checklist = searchIDs.get();
+    var saved_report = new Object();
+     if($("#SavedReports option:selected").text() != "") {
+       for (var report in report_list.reports) {
+         if (report_list.reports[report].name==$("#SavedReports option:selected").text()) {
+        var saved_report = JSON.parse(report_list.reports[report].def);
+         }
+       }
+       // var saved_report = JSON.parse(GM_getValue($("#SavedReports option:selected").text()));
+         checklist = saved_report.fields;
+     }
+    var report_type = $( "#report_type option:selected" ).text();
+    $("#fieldlist").empty();
+    $("#fieldlist").show();
+     if ((report_type=="Members & Badges")|(report_type=="Members")|(report_type=="Events & Attendance")|(report_type=="Members & Badges Details") ){
+    field_list = field_list + "<li>Members";
+    field_list = field_list + "<ul><li>Core Fields";
+    field_list = field_list + "<ul><li>Core Member Fields<ul>";
+    for (var core in core_field_list) {
+        
+        field_list = field_list + "<li class=\"chkfld\"><input type=\"checkbox\" name=\""+core_field_list[core].fieldlabel+"\" value=\""+core_field_list[core].fieldname;
+        field_list = field_list + "\" id=\""+core_field_list[core].fieldname+"\""+is_checked(checklist,core_field_list[core].fieldname)+"><label for=\""+core_field_list[core].fieldname+"\">"+core_field_list[core].fieldlabel + "</label></li>";
+    }   
+    field_list = field_list + "</ul></li>";
+    for(var section in report_config) {
+        if ((report_config[section].memberconfig !== "")&&(core_fields === true)) {
+     var fields_array = JSON.parse(report_config[section].memberconfig);
+            core_fields = false;
+        for(var fieldgroup in fields_array['data']) {
+            // alert(fields_array['data'][fieldgroup].name);
+            if (fields_array['data'][fieldgroup].is_considered_core == "yes") {
+              field_list = field_list + "<li>" + fields_array['data'][fieldgroup].name + "<ul>";
+              for (var fieldlist in fields_array['data'][fieldgroup]['columns']) {
+                  if ( fields_array['data'][fieldgroup]['columns'][fieldlist].is_core == "yes" ) {
+                var chklbl = fields_array['data'][fieldgroup]['columns'][fieldlist].label;
+
+                var chkval = "MA|" + fields_array['data'][fieldgroup].group_id + "|" + fields_array['data'][fieldgroup]['columns'][fieldlist].column_id; 
+var chklbl2 = "<label for=\""+chkval+"\">"+fields_array['data'][fieldgroup]['columns'][fieldlist].label+"</label>";
+                field_list = field_list + "<li class=\"chkfld\"><input type=\"checkbox\" name=\""+chklbl+ " " +  fields_array['data'][fieldgroup].group_id+"\" value=\""+chkval+"\" id=\""+chkval+"\""+is_checked(checklist,chkval)+"><label for=\""+chkval+"\">"+chklbl + " " +  fields_array['data'][fieldgroup].group_id + "</label><br></li>";
+                  }
+              }
+              field_list = field_list + "</ul></li>";
+            }
+        }
+        }
+        if (core_fields === false) { break };
+    }
+    
+    field_list = field_list + "</li></ul>"
+    
+    // Sectional Fields (inc Flex)
+    
+    for( section in report_config) {
+        field_list = field_list + "<li>Additional fields for "+ roles_config[get_roles_section(section)].groupname+":"+roles_config[get_roles_section(section)].sectionname + "<ul>";
+       if ((report_config[section].memberconfig !== "")) {
+        
+        var fields_array = JSON.parse(report_config[section].memberconfig);
+            core_fields = false;
+        for( fieldgroup in fields_array['data']) {
+            var print_header = true;
+           for (var fieldlist in fields_array['data'][fieldgroup]['columns']) {
+               if ( fields_array['data'][fieldgroup]['columns'][fieldlist].is_core == "no" ) {
+                  if ( print_header===true) {
+                     field_list = field_list + "<li>" + fields_array['data'][fieldgroup].name + "<ul>";      
+                     print_header = false;
+                  };
+                var chklbl =fields_array['data'][fieldgroup]['columns'][fieldlist].label;
+var chklbl2 = "<label for=\""+chklbl+"\">"+fields_array['data'][fieldgroup]['columns'][fieldlist].label+"</label>";
+                var chkval = "MA|" + fields_array['data'][fieldgroup].group_id + "|" + fields_array['data'][fieldgroup]['columns'][fieldlist].column_id; 
+                field_list = field_list + "<li class=\"chkfld\"><input type=\"checkbox\" name=\""+chklbl+"\" value=\""+chkval+"\" id=\""+chkval+"\""+is_checked(checklist,chkval)+">"+chklbl2 + "<br></li>";
+              }
+           }
+           if ( print_header===false) {
+           field_list = field_list + "</ul></li>";
+           };
+           
+        } 
+       }
+            // Flexi
+           // var flex_cfg_array = JSON.parse(report_config[section].flexiconfig);
+    
+         //   for(var flexi in flex_cfg_array.items) {
+          for(var flexi in report_config[section].flexifields) {
+                //var flex_cfg = JSON.parse(report_config[section].flexiconfig[flex_cfg_array.items[flexi].extraid]);
+                //var flex_cfg = flex_cfg_array.items[flexi];
+              var flex_cfg = JSON.parse(report_config[section].flexifields[flexi]);
+                field_list = field_list + "<li>"+ flex_cfg.name+"<ul>";
+                    for (var flexif in flex_cfg.structure[1].rows) {
+                    var chklbl = "<label>"+flex_cfg.structure[1].rows[flexif].name+"</label>";
+var chklbl2 = flex_cfg.structure[1].rows[flexif].name;
+                           //   var chkval = "MF"+"|"+flex_cfg_array.items[flexi].extraid+"|"+flex_cfg.structure[1].rows[flexif].field;    
+                        var chkval = "MF"+"|"+flexi+"|"+flex_cfg.structure[1].rows[flexif].field;    
+                    field_list = field_list + "<li class=\"chkfld\"><input type=\"checkbox\" name=\""+chklbl2+"\" value=\""+chkval+"\" id=\""+chkval+"\""+is_checked(checklist,chkval)+">"+chklbl+"</li>";
+                }
+                field_list = field_list + "</ul></li>"; // Flex end
+            }
+            
+            field_list = field_list + "</ul></li>";
+        
+        
+    }
+    
+   
+    //field_list = field_list + "</ul>";      
+    field_list = field_list + "</li></ul>"; // Members
+}
+    if ((report_type=="Members & Badges Details")|(report_type=="Members & Badges")|(report_type=="Badges") ){
+    field_list = field_list + "<li>Badges<ul>";
+    for (var core in badge_field_list) {
+        
+        field_list = field_list + "<li class=\"chkfld\"><input type=\"checkbox\" name=\""+badge_field_list[core].fieldlabel+"\" value=\""+badge_field_list[core].fieldname;
+        field_list = field_list + "\" id=\""+badge_field_list[core].fieldname+"\""+is_checked(checklist,badge_field_list[core].fieldname)+">"+badge_field_list[core].fieldlabel + "</li>";
+    } 
+    field_list = field_list + "</ul></li>"; // Badges
+    }
+    
+    if ((report_type=="Members & Badges")|(report_type=="Members & Badges Details")) {
+    field_list = field_list + "<li>Badges per Member<ul>";
+    for (var core in bm_field_list) {
+        
+        field_list = field_list + "<li class=\"chkfld\"><input type=\"checkbox\" name=\""+bm_field_list[core].fieldlabel+"\" value=\""+bm_field_list[core].fieldname;
+        field_list = field_list + "\" id=\""+bm_field_list[core].fieldname+"\""+is_checked(checklist,bm_field_list[core].fieldname)+">"+bm_field_list[core].fieldlabel + "</li>";
+    } 
+    field_list = field_list + "</ul></li>"; // Badges
+    }
+    if (report_type=="Members & Badges Details") {
+field_list = field_list + "<li>Badge Requirements per Member<ul>";
+    for (var core in bm_field_detail_list) {    
+        field_list = field_list + "<li class=\"chkfld\"><input type=\"checkbox\" name=\""+bm_field_detail_list[core].fieldlabel+"\" value=\""+bm_field_detail_list[core].fieldname;
+        field_list = field_list + "\" id=\""+bm_field_detail_list[core].fieldname+"\""+is_checked(checklist,bm_field_detail_list[core].fieldname)+">"+bm_field_detail_list[core].fieldlabel + "</li>";
+    } 
+    field_list = field_list + "</ul></li>"; // Badges
+
+    }
+    if ((report_type=="Events")|(report_type=="Events & QM Lists")|(report_type=="Events & Attendance") ){
+    field_list = field_list + "<li>Events<ul>";
+    for (var core in ev_field_list) {
+        
+        field_list = field_list + "<li class=\"chkfld\"><input type=\"checkbox\" name=\""+ev_field_list[core].fieldlabel+"\" value=\""+ev_field_list[core].fieldname;
+        field_list = field_list + "\" id=\""+ev_field_list[core].fieldname+"\""+is_checked(checklist,ev_field_list[core].fieldname)+">"+ev_field_list[core].fieldlabel + "</li>";
+    } 
+    field_list = field_list + "</ul></li>"; 
+    }
+    if ((report_type=="Events & Attendance") ){
+    field_list = field_list + "<li>Event Attendance<ul>";
+    for (var core in  ev_att_list) {
+        
+        field_list = field_list + "<li class=\"chkfld\"><input type=\"checkbox\" name=\""+ev_att_list[core].fieldlabel+"\" value=\""+ev_att_list[core].fieldname;
+        field_list = field_list + "\" id=\""+ev_att_list[core].fieldname+"\""+is_checked(checklist,ev_att_list[core].fieldname)+">"+ev_att_list[core].fieldlabel + "</li>";
+    } 
+        for (var section in report_config) {
+        field_list = field_list + "<li>Events for "+roles_config[get_roles_section(section)].groupname+":"+roles_config[ get_roles_section(section) ].sectionname +"<ul>"
+        for (var events in report_config[section].eventcfg) {
+            var event_config = JSON.parse(report_config[section].eventcfg[events]);
+            var event_fields = []
+            if ((event_config.config!="{}")&(event_config.config!="")&(event_config.config!=null)&(event_config.startdate >= datepicker.value ) ) {
+                event_fields = JSON.parse(event_config.config);  }  
+            if (event_fields===null) { event_fields = [];}
+         //   if (event_fields.length>0) {
+if (event_config.structure[1].rows.length>0) {
+
+                field_list = field_list + "<li>"+event_config.name+"<ul>" }
+           // for (var event_f in event_fields) {
+              for (var event_f in event_config.structure[1].rows) {
+               // var chkval = "EA|"+event_config.eventid+"|"+event_fields[event_f].id;
+var chkval = "EA|"+event_config.eventid+"|"+event_config.structure[1].rows[event_f].field;
+     //           var chklbl = event_fields[event_f].name;
+var chklbl = event_config.structure[1].rows[event_f].name;
+                field_list = field_list + "<li class=\"chkfld\"><input type=\"checkbox\" name=\""+chklbl+"\" value=\""+chkval+"\" id=\""+chkval+"\""+is_checked(checklist,chkval)+">"+chklbl + "<br></li>";
+                // field_list = field_list + "<li>" + event_fields[event_f].name + "</li>"
+            }
+          //  if (event_fields.length>0) { field_list = field_list + "</ul></li>" }
+if (event_config.structure[1].rows.length>0) { field_list = field_list + "</ul></li>" }
+
+        }
+            field_list = field_list + "</ul></li>"; 
+        }
+    field_list = field_list + "</ul></li>"; 
+    }
+
+    if (report_type == "Badge Stock") {
+    field_list = field_list + "<li>Badge Stock<ul>";
+    for (var core in bs_field_list) {
+        
+        field_list = field_list + "<li class=\"chkfld\"><input type=\"checkbox\" name=\""+bs_field_list[core].fieldlabel+"\" value=\""+bs_field_list[core].fieldname;
+        field_list = field_list + "\" id=\""+bs_field_list[core].fieldname+"\""+is_checked(checklist,bs_field_list[core].fieldname)+">"+bs_field_list[core].fieldlabel + "</li>";
+    } 
+    field_list = field_list + "</ul></li>"; 
+    }
+
+
+
+    
+    
+    if ((report_type=="QM List")|(report_type=="Events & QM Lists") ){
+    field_list = field_list + "<li>QM Lists<ul>";
+    for (var core in qm_field_list) {
+        
+        field_list = field_list + "<li class=\"chkfld\"><input type=\"checkbox\" name=\""+qm_field_list[core].fieldlabel+"\" value=\""+qm_field_list[core].fieldname;
+        field_list = field_list + "\" id=\""+qm_field_list[core].fieldname+"\""+is_checked(checklist,qm_field_list[core].fieldname)+">"+qm_field_list[core].fieldlabel + "</li>";
+    } 
+    field_list = field_list + "</ul></li>"; 
+    }
+
+    field_list = field_list + "</ul></div>";
+      $("#fieldlist").empty();
+     $("#fieldlist").append(field_list);
+    //alert("Hello 2");
+    $( "#progressbar" ).hide();
+    $( ".progress-label" ).hide();
+      $('#expList').find('li:has(ul)')
+      .unbind('click')
+      .click(function(event) {
+        if(this == event.target) {
+           $(this).toggleClass('expanded');
+           $(this).children('ul').toggle('medium');
+        }
+        // return false;
+       }).addClass('collapsed')
+      .removeClass('expanded')
+      .children('ul').hide();
+
+$('#expandList').unbind('click').click(function() {
+    $('.collapsed').addClass('expanded');
+    $('.collapsed').children().show('medium');
+  });
+  $('#collapseList').unbind('click').click(function() {
+    $('.collapsed').removeClass('expanded');
+    $('.collapsed').children().hide('medium');
+  });
+}
+
+
+function get_data_xhr2(c,f) {
+var do_http = true;
+        $( "#progressbar" ).progressbar({ value: 100 * ( (c + 1) / get_data_array.length )});
+        $( ".progress-label" ).text(get_data_array[c].field);
+        if (typeof get_data_array[c].olddata!= "undefined") {
+          var tfield = get_data_array[c].field;
+          var tindex = "";
+          if (tfield.indexOf("|")>1) {
+            tindex = get_data_array[c].field.substring(get_data_array[c].field.lastIndexOf("|")+1);
+            tfield = get_data_array[c].field.substring(0,get_data_array[c].field.lastIndexOf("|"));
+           }  
+
+
+          if ((typeof get_data_array[c].olddata[tfield] != "undefined")) {
+            if (tindex=="") {
+              get_data_array[c].data[tfield] = get_data_array[c].olddata[tfield]; 
+              do_http = false;
+            } 
+            
+            if (tindex!="") {
+               if ((typeof get_data_array[c].olddata[tfield][tindex] != "undefined")) {        
+                get_data_array[c].data[tfield][tindex] = get_data_array[c].olddata[tfield][tindex]; 
+                do_http = false;
+              }
+              
+            }
+          }
+        if (do_http==false) {
+          if ((get_data_array.length -1)  != c ) {
+             if (get_data_array[c+1].type == "GET") { get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
+           } else { alert('f();'); }
+        }
+    }
+    
+    if (do_http === true ) {
+    var url = get_data_array[c].url;
+    var osmpath = url.substring(37,url.indexOf("?"));
+    url = relay_path +"?osmpath="+osmpath+"&"+url.substring(url.indexOf("?")+1,1000);
+    p2 = [];
+    if (security !== null ) {
+      p2['secret'] = security.secret;
+      p2['userid'] = security.userid;
+    }
+
+    var obj = $.extend({}, p2);
+    $.post(url,$.param(obj),function(data,status){
+       var index = "";
+       if (get_data_array[c].field.indexOf("|")>1) {
+          index = get_data_array[c].field.substring(get_data_array[c].field.lastIndexOf("|")+1);
+          get_data_array[c].field = get_data_array[c].field.substring(0,get_data_array[c].field.lastIndexOf("|"));
+       }
+
+       if (index=="") { get_data_array[c].data[get_data_array[c].field] = data; }
+                    else 
+                      { get_data_array[c].data[get_data_array[c].field][index] = data; }
+      
+      if ((get_data_array.length -1)  != c ) {
+       if (get_data_array[c+1].type == "GET") {
+              get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
+              } else { 
+              f();
+              }
+                 
+      });
+
+}
+}
+
+
+function get_data_xhr(c,f) {
+
+
+// Faster Block
+if ((get_data_array.length -1)  != c ) {
+       if (get_data_array[c+1].type == "GET") {
+              get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
+    } else { 
+//       f();
+             };
+                 
+     
+// End of Faster
+
+
+var do_http = true;
+       // $( "#progressbar" ).progressbar({ value: 100 * ( (c + 1) / get_data_array.length )});
+       // $( ".progress-label" ).text(get_data_array[c].field);
+        if (typeof get_data_array[c].olddata!= "undefined") {
+          var tfield = get_data_array[c].field;
+          var tindex = "";
+          if (tfield.indexOf("|")>1) {
+            tindex = get_data_array[c].field.substring(get_data_array[c].field.lastIndexOf("|")+1);
+            tfield = get_data_array[c].field.substring(0,get_data_array[c].field.lastIndexOf("|"));
+           }  
+
+
+          if ((typeof get_data_array[c].olddata[tfield] != "undefined")) {
+            if (tindex=="") {
+              get_data_array[c].data[tfield] = get_data_array[c].olddata[tfield]; 
+              do_http = false;
+            } 
+            
+            if (tindex!="") {
+               if ((typeof get_data_array[c].olddata[tfield][tindex] != "undefined")) {        
+                get_data_array[c].data[tfield][tindex] = get_data_array[c].olddata[tfield][tindex]; 
+                do_http = false;
+              }
+              
+            }
+          }
+        if (do_http==false) {
+//          if ((get_data_array.length -1)  != c ) {
+//            if (get_data_array[c+1].type == "GET") { get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
+//          } else { f(); }
+$( "#progressbar" ).progressbar({ value: 100 * ( get_data_array2.length / get_data_array.length ) });
+           $( ".progress-label" ).text(get_data_array[c].field);
+
+           get_data_array2.push(get_data_array[c]);
+           if (get_data_array.length == get_data_array2.length ) {f();}
+        }
+    }
+    
+    if (do_http === true ) {
+    var url = get_data_array[c].url;
+    var osmpath = url.substring(37,url.indexOf("?"));
+    url = relay_path +"?osmpath="+osmpath+"&"+url.substring(url.indexOf("?")+1,1000);
+    p2 = [];
+    if (security !== null ) {
+      p2['secret'] = security.secret;
+      p2['userid'] = security.userid;
+    }
+
+    var obj = $.extend({}, p2);
+    $.post(url,$.param(obj),function(data,status){
+       var index = "";
+       if (data.search("CAPTCHA")==-1) {
+       if (get_data_array[c].field.indexOf("|")>1) {
+          index = get_data_array[c].field.substring(get_data_array[c].field.lastIndexOf("|")+1);
+          get_data_array[c].field = get_data_array[c].field.substring(0,get_data_array[c].field.lastIndexOf("|"));
+       }
+
+       if (index=="") { get_data_array[c].data[get_data_array[c].field] = data; }
+                    else 
+                      { get_data_array[c].data[get_data_array[c].field][index] = data; }
+      
+      //if ((get_data_array.length -1)  != c ) {
+      // if (get_data_array[c+1].type == "GET") {
+      //        get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
+      //        } else { 
+      //        f();
+      //        }
+           $( "#progressbar" ).progressbar({ value: 100 * ( get_data_array2.length / get_data_array.length ) });
+           $( ".progress-label" ).text(get_data_array[c].field);
+           get_data_array2.push(get_data_array[c]);
+           if (get_data_array.length == get_data_array2.length ) {f();} 
+        } else { get_data_xhr(c,f); }
+     
+                 
+     });
+
+}
+}
+
+
+
+
+    
+
+
+function get_data_post_xhr(c,f) {
+
+if ((get_data_array.length -1)  != c ) {
+       if (get_data_array[c+1].type == "GET") {
+              get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
+    } else { 
+//       f();
+             };
+
+
+   //   $( "#progressbar" ).progressbar({ value: 100 * ( (c + 1) / get_data_array.length ) });
+   //   $( ".progress-label" ).text(get_data_array[c].field);
+     var  do_http = true;
+     if (typeof get_data_array[c].olddata!= "undefined") {
+        var tfield = get_data_array[c].field;
+        var tindex = "";
+        if (tfield.indexOf("|")>1) {
+          tindex = get_data_array[c].field.substring(get_data_array[c].field.lastIndexOf("|")+1);
+          tfield = get_data_array[c].field.substring(0,get_data_array[c].field.lastIndexOf("|"));
+        }  
+        if ((typeof get_data_array[c].olddata[tfield] != "undefined")) {
+         if (tindex=="") { 
+            get_data_array[c].data[tfield] = get_data_array[c].olddata[tfield]; 
+            do_http = false;
+         }
+        
+        if (tindex!="") { 
+          if ((typeof get_data_array[c].olddata[tfield][tindex] != "undefined")) {
+            get_data_array[c].data[tfield][tindex] = get_data_array[c].olddata[tfield][tindex]; 
+            do_http = false;
+          }
+        }
+        if (do_http == false) {
+ 
+//         if ((get_data_array.length -1)  != c ) {
+//           if (get_data_array[c+1].type == "GET") { get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
+//         } else { 
+//          f();
+//         }
+           $( "#progressbar" ).progressbar({ value: 100 * ( get_data_array2.length / get_data_array.length ) });
+           $( ".progress-label" ).text(get_data_array[c].field);
+           get_data_array2.push(get_data_array[c]);
+           if (get_data_array.length == get_data_array2.length ) {f();}
+
+ 
+       }
+      }    
+     }
+    
+    if (do_http===true) {
+    var url = get_data_array[c].url;
+    var osmpath = url.substring(37,url.indexOf("?"));
+    url = relay_path +"?osmpath="+osmpath+"&"+url.substring(url.indexOf("?")+1,1000);
+ 
+    if (security !== null ) {
+      get_data_array[c].postvar=get_data_array[c].postvar+"&secret="+security.secret;
+      get_data_array[c].postvar=get_data_array[c].postvar+"&userid="+security.userid;
+    }
+ 
+
+    //var obj = $.extend({}, get_data_array[c].postvar);
+    $.post(url,get_data_array[c].postvar,function(data,status){
+       var index = "";
+       if (get_data_array[c].field.indexOf("|")>1) {
+          index = get_data_array[c].field.substring(get_data_array[c].field.lastIndexOf("|")+1);
+          get_data_array[c].field = get_data_array[c].field.substring(0,get_data_array[c].field.lastIndexOf("|"));
+       }
+
+       if (index=="") { get_data_array[c].data[get_data_array[c].field] = data; }
+                    else 
+                      { get_data_array[c].data[get_data_array[c].field][index] = data; }
+      
+    //  if ((get_data_array.length -1)  != c ) {
+    //   if (get_data_array[c+1].type == "GET") {
+     //         get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
+     //         } else { 
+     //         f();
+     //         }
+ $( "#progressbar" ).progressbar({ value: 100 * ( get_data_array2.length / get_data_array.length ) });
+           $( ".progress-label" ).text(get_data_array[c].field);
+       get_data_array2.push(get_data_array[c]);
+           if (get_data_array.length == get_data_array2.length ) {f();}
+
+                 
+      });
+
+
+    }
+}
+
+function get_data_post_xhr2(c,f) {
+      $( "#progressbar" ).progressbar({ value: 100 * ( (c + 1) / get_data_array.length ) });
+      $( ".progress-label" ).text(get_data_array[c].field);
+     var  do_http = true;
+     if (typeof get_data_array[c].olddata!= "undefined") {
+        var tfield = get_data_array[c].field;
+         var tindex = "";
+        if (tfield.indexOf("|")>1) {
+          tindex = get_data_array[c].field.substring(get_data_array[c].field.lastIndexOf("|")+1);
+          tfield = get_data_array[c].field.substring(0,get_data_array[c].field.lastIndexOf("|"));
+        }  
+        if ((typeof get_data_array[c].olddata[get_data_array[c].tfield] != "undefined")) { 
+        get_data_array[c].data[get_data_array[c].tfield] = get_data_array[c].olddata[get_data_array[c].tfield]; 
+        do_http = false;
+        if ((get_data_array.length -1)  != c ) {
+       if (get_data_array[c+1].type == "GET") {
+              get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
+      } else { 
+      f();
+      }
+    }
+    }
+    
+    if (do_http===true) {
+    GM_xmlhttpRequest({
+  method: "POST",
+  data: get_data_array[c].postvar,
+        headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  },
+  url: get_data_array[c].url,
+  onload: function(response) {
+    //alert(response.responseText);
+    //  switch(get_data_array[c].field) {
+    //      case 'members': get_data_array[c].data.members = response.responseText; break;
+    //      case 'config': get_data_array[c].data.memberconfig = response.responseText; break;    
+    //  }
+    get_data_array[c].data[get_data_array[c].field] = response.responseText;
+      if ((get_data_array.length -1)  != c ) {
+          if (get_data_array[c+1].type == "GET") {
+              get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
+      } else { 
+      f();
+      }
+  }
+});
+    }
+}
+
+
+
+var columnsizes = new Object();
+var dataView;
+var exclusions;
+var groups;
+var sortcols;
+var slick_full_config = new Object();
+function collect_slickfilters() 
+{
+     sortcols= [];
+     $("#reportoutput").find('li.sortAttr').each(function() {
+         var filter
+        filter = $(this);
+        var sortobj = new Object();
+         sortobj.name = filter.text();
+         sortobj.ascend = filter.find("span").hasClass("ui-icon-arrowthick-1-n");
+       // alert(filter.find("span").hasClass("ui-icon-arrowthick-1-n")+" "+filter.text());
+         sortcols.push(sortobj);
+     });
+      
+     exclusions = {};
+            $("#reportoutput").find('input.pvtFilter').not(':checked').each(function() {
+              var filter;
+              filter = $(this).data("filter");
+              if (exclusions[filter[0]] != null) {
+                return exclusions[filter[0]].push(filter[1]);
+              } else {
+                return exclusions[filter[0]] = [filter[1]];
+              }
+            });
+    // oldgroups = dataView.getGrouping();
+     groups = [];
+     // Groups are generted
+       $("#reportoutput").find('li.sortAttr').each(function() {
+       var filter
+       filter = $(this).text();
+       $("#reportoutput").find('input.slkgrp:checked').each(function() {
+       if ( $(this).data("group")==filter ) {
+        var groupobj = new Object();
+        groupobj.getter = filter;
+        //groupobj.aggregators = new Slick.Data.Aggregators.Sum("Attending");
+        groupobj.formatter = function (g) {  
+if ($("#disp_totals_ck").prop("checked")) { 
+return filter+":  " + g.value + "  <span style='color:green'>(" + g.count + " items)</span>"; } else
+{
+return filter+":  " + g.value;
+} 
+};
+        groupobj.displayTotalsRow = true;
+  //      for (var gl in oldgroups) {
+  //        if (oldgroups[gl].getter =  groupobj.getter ) { groupobj.collapsed = oldgroups[gl].collapsed; }
+  //      }
+        groups.push(groupobj);  
+       }
+       });
+       });
+}
+function filterslick(item)
+{
+    var ret;
+    ret = true;
+    for(var key in item) {
+    var value = item[key];
+   //** ewjewkj 
+   for (var key2 in exclusions) {
+    if (key2 == key) {
+       var value2 = exclusions[key];
+       for (var l in value2) {
+           if (value2[l]==value) {
+              ret = false;
+           }
+        }
+     }
+    }
+    }
+    return ret;
+}
+    
+    //var test
+    //test = Math.round(Math.random() * 10);
+   //// if (test<5) {
+   // return true;
+  //  } else { return false };
+    var report_data = new Array();      
+function sort_dataview() {
+    report_data.sort(function (dataRow1, dataRow2) {
+        for (var i = 0, l = sortcols.length; i < l; i++) {
+          var field = sortcols[i].name;
+          var sign = sortcols[i].ascend ? 1 : -1;
+          var value1 = dataRow1[field], value2 = dataRow2[field];
+          var result = (value1 == value2 ? 0 : (value1 > value2 ? 1 : -1)) * sign;
+          if (result != 0) {
+            return result;
+          }
+        }
+        return 0;
+      });
+}
+
+function slick_click (checklist) {
+    grid.onClick.subscribe(function (e, args) {
+    var item = dataView.getItem(args.row);
+    if(item.hasOwnProperty('groupingKey')) {
+    if(item.collapsed == 1) {
+    dataView.expandGroup(item.groupingKey);
+    } else
+    {
+    dataView.collapseGroup(item.groupingKey);
+    }
+    grid.invalidateAllRows();
+    grid.render();
+    grid.resizeCanvas();
+    }
+    });
+    grid.onColumnsResized.subscribe(function() {
+       var sze = grid.getColumns();
+       for (var i in sze) 
+       { columnsizes[sze[i].field] = sze[i].width; };
+       slickupdate(dataView,grid,checklist,false,false) ;
+    } );
+}
+function slickupdate(dataView,grid,checklist,event,grp) {
+    collect_slickfilters();
+   sort_dataview();
+    dataView.refresh();
+    if (grp) {
+    dataView.setGrouping(groups);
+    }
+    if ($(".slickot option:selected").text()=="Grid") {
+    grid.invalidateAllRows();
+    grid.render();
+    if (event) {
+        slick_click (checklist);
+    } 
+    grid.resizeCanvas();
+    } else  { slick_pdf() };
+            
+     slick_full_config.report_type =     $( "#report_type option:selected" ).text();
+     slick_full_config.output_type =     $( ".slickot option:selected" ).val();
+     slick_full_config.fields = checklist;
+     slick_full_config.exclusions = exclusions;
+    var gridconfig = new Object();
+    var lis2 = document.getElementById("selfields")
+    var lis = document.getElementById("selfields").getElementsByTagName("li");
+    gridconfig.rows = new Array;
+    for (var i = 0; i < lis.length; i++) { 
+      gridconfig.rows.push(lis[i].id);
+    }
+    gridconfig.groups = new Array;
+    for (var i = 0; i < groups.length; i++) { 
+      gridconfig.groups.push(groups[i].getter);
+    }
+    gridconfig.sort = new Array;
+    gridconfig.sort = sortcols.slice(0);
+    gridconfig.sizes = new Object;
+    for (var i in gridconfig.rows) {
+        gridconfig.sizes[gridconfig.rows[i]] = columnsizes[gridconfig.rows[i]];
+    }
+    slick_full_config.grid = gridconfig;
+     $("#config_json").val(JSON.stringify(slick_full_config, undefined, 2));
+}
+
+function select_checks() {
+    dialog2.dialog( "close" );
+  //   dialog3.dialog( "open" );
+    // this returns a list of values that are checked
+dialog_delay.dialog( "open" );
+     var searchIDs = $('#fieldtable input:checked').map(function(){
+        
+      return $(this).val();
+        
+    });
+    var searchIDs2 = $('#fieldtable input:checked').map(function(){
+        
+      return $(this).attr("name");
+        
+    });
+    var month_list = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var badge_types = [ "Challenge", "Activity","Staged", "Core"];
+  
+    var checklist = searchIDs.get();
+    var checklist2 = searchIDs2.get();
+    var report_type = $( "#report_type option:selected" ).text();
+    report_data = [];
+   // ga('send', 'event', 'Report', 'OSMR', report_type);
+    // Members and Members & Badges
+    if ((report_type=="Members")|(report_type=="Members & Badges")|(report_type=="Members & Badges Details")) {
+    for(var section in report_config) {
+        var members_array = JSON.parse(report_config[section].members);
+        for( var member in members_array.data) {  
+           var report_line = new Object();
+          for (var field in checklist ) {
+              if ( checklist[field].substring(0,7)=="MC|Core" ){
+                 var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
+                 report_line[checklist2[field]] = members_array.data[member][fn];
+                 if (fn=="full_name") { report_line[checklist2[field]] = members_array.data[member].first_name+" "+members_array.data[member].last_name; };
+                  if (fn=="patrol_role_short") { report_line[checklist2[field]] = globals.patrol_roles[roles_config[get_roles_section(section)].section][members_array.data[member].patrol_role_level].abbr; }
+                  if (fn=="group_name") { report_line[checklist2[field]] = roles_config[get_roles_section(section)].groupname; };
+                  if (fn=="section_name") { report_line[checklist2[field]] = roles_config[get_roles_section(section)].sectionname; };
+                     if (fn=="full_age") { report_line[checklist2[field]] = getAge(members_array.data[member].date_of_birth,"","a"); };
+                     if (fn=="age_years") { report_line[checklist2[field]] = getAge(members_array.data[member].date_of_birth,"","y"); };
+                     if (fn=="birth_month") { report_line[checklist2[field]] = month_list[(new Date(members_array.data[member].date_of_birth).getMonth())]; };
+                  if (fn=="timemovement") { report_line[checklist2[field]] = getAge(members_array.data[member].joined,"","s"); };
+              }
+              if ( checklist[field].substring(0,2)=="MA" ){
+                var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
+               // alert(checklist[field].indexOf("|")+1);
+                var gp = checklist[field].substring(checklist[field].indexOf("|")+1,checklist[field].lastIndexOf("|"));
+                report_line[checklist2[field]] = members_array.data[member].custom_data[gp][fn];  
+              }  
+              if ( checklist[field].substring(0,2)=="MF" ){
+                  var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
+                  var gp = checklist[field].substring(checklist[field].indexOf("|")+1,checklist[field].lastIndexOf("|"));
+                  if (report_config[section].flexirecords[gp]!=null){
+                  var flx = JSON.parse(report_config[section].flexirecords[gp]);
+                  for (var flxm in flx.items) {
+                      if (flx.items[flxm].scoutid==member) {
+                          report_line[checklist2[field]] = flx.items[flxm][fn];  
+                      }   
+                  } 
+                  } else { report_line[checklist2[field]] = "" };
+              }
+          } // Fields (Members)
+            if (report_type=="Members") {
+              report_data.push(report_line);
+            };
+            if ((report_type=="Members & Badges")|(report_type=="Members & Badges Details")) {
+            // Loop at Badges and look for member/badge intersects 
+               
+                var bm_def = JSON.parse(report_config[section].memberbadges);
+                for (var badge_type in report_config[section].badges) {
+                    var badge_def = JSON.parse(report_config[section].badges[badge_type]);
+                    for (var badges in badge_def.details) {
+                        var bm_match = false;
+                       // var report_line2 = new Object();
+                        report_line2 =  Object.assign({}, report_line);
+                       // for (var key in report_line) {
+                        //copy all the fields
+                       //   report_line2[key] = report_line[key];
+                       // }
+
+                        for (var field in checklist ) {
+                           if ( checklist[field].substring(0,8)=="BG|Badge" ){
+                            var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
+                            report_line2[checklist2[field]] = badge_def.details[badges][fn];   
+                               if (fn=="badge_type") { report_line2[checklist2[field]] = badge_types[badge_type-1]; }
+                               if (fn=="badge_section") { report_line2[checklist2[field]] = section_config[section].section_type; }
+                           }
+                           
+                           if ( checklist[field].substring(0,8)=="BM|Badge" ){
+                               report_line2[checklist2[field]] = "";
+                               var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
+                               for (var bm in bm_def.data) {
+                                   if (bm_def.data[bm].scout_id == member) {
+                              
+var bmb = bm_def.data[bm].badges.findIndex(function find(a){return a.badge_shortname==badges;});
+  if (bmb!=-1){ bm_match = true; 
+    report_line2[checklist2[field]] = bm_def.data[bm].badges[bmb][fn];
+    if (fn=="awarded_date") {
+      if (bm_def.data[bm].badges[bmb][fn]==-1) 
+        {report_line2[checklist2[field]] = ""; } else 
+        {report_line2[checklist2[field]] = new Date(1000*bm_def.data[bm].badges[bmb][fn]);};
+
+    } 
+  };
+
+if (report_type=="Members & Badges Details") {
+     
+} 
+      
+//      for (var bmb in bm_def.data[bm].badges) {
+//     if (bm_def.data[bm].badges[bmb].badge_identifier == badges ) {
+//        bm_match = true;
+//  report_line2[checklist2[field]] = bm_def.data[bm].badges[bmb][fn];
+//if (fn=="awarded_date") {
+//if (bm_def.data[bm].badges[bmb][fn]==-1) {report_line2[checklist2[field]] = ""; } else {report_line2[checklist2[field]] = new Date(1000*bm_def.data[bm].badges[bmb][fn]);};
+
+// }
+// }    
+// }
+
+                                   }
+                               }
+                           }
+                        }
+                         if (report_type=="Members & Badges") {
+                         report_data.push(report_line2);
+                         } else 
+                         {
+                           
+                          // Badges and Details
+
+bmr_list=[{name: "No Requirements", field: "114596", width: "150px", formatter: "cellFormatter", tooltip: "No fixed Requirement"}];
+if (badge_def.structure.hasOwnProperty(badges)) {
+if (badge_def.structure[badges].length == 2){
+var bmr_list = badge_def.structure[badges][1].rows;}
+else {bmr_list=[{name: "No Requirements", field: "114596", module: "a", width: "150px", formatter: "cellFormatter", tooltip: "No fixed Requirement"}];}
+}
+
+var lastmodule = "";
+var lastmoduleindex = 0;
+var reqcounter = 1;
+
+                        for (var bmr_list_idx in bmr_list) {
+//  var report_line3 = new Object();
+                       //      for (var key in report_line2) {
+                       //        //copy all the fields
+                       //        report_line3[key] = report_line2[key];
+                       //      }
+report_line3 =  Object.assign({}, report_line2);
+
+if (lastmodule==bmr_list[bmr_list_idx]["module"])
+{ reqcounter = reqcounter + 1;} else
+{ reqcounter = 1;
+lastmoduleindex = lastmoduleindex + 1; 
+lastmodule=bmr_list[bmr_list_idx]["module"];};
+var bmd = JSON.parse( report_config[section].badgereq[badges]); // Member & Req
+                             var bmr = badge_def.structure[badges]; // Req
+var bmd_index = bmd.items.findIndex(function find(a){return a.scoutid==member;});
+                          for (var field in checklist ) {
+                            if ( checklist[field].substring(0,8)=="BD|Badge" ){
+                             
+                             var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
+                             
+                             
+                             report_line3[checklist2[field]] = bmr_list[bmr_list_idx][fn];
+                             if (fn!="module") { report_line3[checklist2[field]] = reqcounter  + ". "+ report_line3[checklist2[field]]; } 
+                             if ((fn=="module")&(JSON.parse(badge_def.details[badges].config).hasOwnProperty("shownumbers")))
+                             {
+                                report_line3[checklist2[field]] = "Level "+JSON.parse(badge_def.details[badges].config).levelslist[lastmoduleindex];
+                             };
+                                 
+                              if (fn=="reqstatus") { report_line3[checklist2[field]] = ""; };
+                             if (bmd_index!=-1) {
+                               
+                                 
+                                 if (fn=="reqstatus") {
+                                 report_line3[checklist2[field]] = bmd.items[bmd_index][bmr_list[bmr_list_idx].field];
+                                 }
+                               }
+                            
+                           } // BD Field
+                          } // Fields
+                          report_data.push(report_line3);
+                           }
+                         } // BAdges & Details
+
+                    } // Badge
+                } // Badge Types
+            } // End of Badges 
+
+        }
+    }
+}
+    if (report_type=="Badges") {
+         for(var section in report_config) {
+            
+             for (var badge_type in report_config[section].badges) {
+                var badge_def = JSON.parse(report_config[section].badges[badge_type]);
+                 for (var badges in badge_def.details) {
+                   var report_line2 = new Object();
+                   for (var field in checklist ) {
+                     if ( checklist[field].substring(0,8)=="BG|Badge" ){
+                       var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
+                       report_line2[checklist2[field]] = badge_def.details[badges][fn];   
+                       if (fn=="badge_type") { report_line2[checklist2[field]] = badge_types[badge_type-1]; }
+                       if (fn=="badge_section") { report_line2[checklist2[field]] = section_config[section].section_type; }
+                     }
+                   }
+                      
+                      report_data.push(report_line2);
+                      
+                 }
+                
+             }
+         }
+    }
+    if (report_type=="Events & Attendance") {
+        for(var section in report_config) {
+               var evlist = JSON.parse(report_config[section].events);
+               for (var events in evlist.items) {
+                   if ( evlist.items[events].startdate >= datepicker.value ) {
+                     var report_line = new Object();
+                     for (var field in checklist ) {
+                       if ( checklist[field].substring(0,8)=="EV|Event" ){
+                         var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
+                         report_line[checklist2[field]] = evlist.items[events][fn];   
+                         if (fn=="group") { report_line[checklist2[field]] = roles_config[get_roles_section(section)].groupname; }
+                         if (fn=="section") { report_line[checklist2[field]] = roles_config[get_roles_section(section)].sectionname; }
+                       } else {report_line[checklist2[field]] = "";}
+                     }
+                   
+//                 Attendance
+                   var attendee_list = JSON.parse(report_config[section].eventatt[ evlist.items[events].eventid]);
+                    var members_array = JSON.parse(report_config[section].members);
+                   for (var attendee in attendee_list.items) {
+                     var report_line2 = new Object();
+                     for (var key in report_line) {
+                          //copy all the fields
+                          report_line2[key] = report_line[key];
+                      }
+                     for (var field in checklist ) {
+                       var member = attendee_list.items[attendee].scoutid;
+                       if ( checklist[field].substring(0,7)=="MC|Core" ){
+                       if (members_array.data[member]!=null){
+                       var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
+                       report_line2[checklist2[field]] = members_array.data[member][fn];
+                 if (fn=="full_name") { report_line2[checklist2[field]] = members_array.data[member].first_name+" "+members_array.data[member].last_name; };
+                  if (fn=="patrol_role_short") { report_line2[checklist2[field]] = globals.patrol_roles[roles_config[get_roles_section(section)].section][members_array.data[member].patrol_role_level].abbr; }
+                  if (fn=="group_name") { report_line2[checklist2[field]] = roles_config[get_roles_section(section)].groupname; };
+                  if (fn=="section_name") { report_line2[checklist2[field]] = roles_config[get_roles_section(section)].sectionname; };
+                     if (fn=="full_age") { report_line2[checklist2[field]] = getAge(members_array.data[member].date_of_birth,"","a"); };
+                     if (fn=="age_years") { report_line2[checklist2[field]] = getAge(members_array.data[member].date_of_birth,"","y"); };
+                     if (fn=="birth_month") { report_line2[checklist2[field]] = month_list[(new Date(members_array.data[member].date_of_birth).getMonth())]; };
+              }}
+              if ( checklist[field].substring(0,2)=="MA" ){
+                var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
+               // alert(checklist[field].indexOf("|")+1);
+                var gp = checklist[field].substring(checklist[field].indexOf("|")+1,checklist[field].lastIndexOf("|"));
+                if  (members_array.data[member]!=null) {
+                report_line2[checklist2[field]] = members_array.data[member].custom_data[gp][fn];  };
+              }  
+              if ( checklist[field].substring(0,2)=="MF" ){
+                  var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
+                  var gp = checklist[field].substring(checklist[field].indexOf("|")+1,checklist[field].lastIndexOf("|"));
+                  if (report_config[section].flexirecords[gp]!=null){
+                  var flx = JSON.parse(report_config[section].flexirecords[gp]);
+                  for (var flxm in flx.items) {
+                      if (flx.items[flxm].scoutid==member) {
+                          report_line2[checklist2[field]] = flx.items[flxm][fn];  
+                      }   
+                  } 
+                  } else { report_line2[checklist2[field]] = "" };
+              }  
+                         
+                         
+                       if ( checklist[field].substring(0,8)=="EA|Event" ){
+                         var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
+                              report_line2[checklist2[field]] = attendee_list.items[attendee][fn];   
+if (fn=="startage") {
+if (typeof(members_array.data[member])!="undefined") {
+report_line2[checklist2[field]] = getAge(members_array.data[member].date_of_birth, evlist.items[events]["startdate"],"a");  
+};
+};
+if (fn=="startages") {
+if (typeof(members_array.data[member])!="undefined") {
+report_line2[checklist2[field]] = getAge(members_array.data[member].date_of_birth, evlist.items[events]["startdate"],"s");  
+};
+};                       }
+                       var field_event = checklist[field].substring(checklist[field].indexOf("|")+1,checklist[field].lastIndexOf("|"))
+                       if (( checklist[field].substring(0,3)=="EA|")&(field_event== evlist.items[events].eventid)){
+                         var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
+                              report_line2[checklist2[field]] = attendee_list.items[attendee][fn];   
+                       }
+                     }
+                       report_data.push(report_line2);     
+                   }
+                    
+                }
+               }
+        }
+    }
+
+    if (report_type == "Badge Stock") {
+      for(var section in report_config) {
+        var bslist = JSON.parse(report_config[section].badge_stock);
+         for (var stock in bslist.items) {
+           var report_line2 = new Object();
+           for (var field in checklist ) {
+             var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
+             report_line2[checklist2[field]] = bslist.items[stock][fn];   
+           }
+           report_data.push(report_line2);
+         }
+      }
+    }
+
+    if ((report_type=="Events")|(report_type=="Events & QM Lists")) {
+           for(var section in report_config) {
+               var evlist = JSON.parse(report_config[section].events);
+               for (var events in evlist.items) {
+                   if ( evlist.items[events].startdate >= datepicker.value ) {
+                    var report_line2 = new Object();
+                    var any_qm = false;
+                   for (var field in checklist ) {
+                       if ( checklist[field].substring(0,1)=="Q" ){ any_qm = true; }
+                     if ( checklist[field].substring(0,8)=="EV|Event" ){
+                         var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
+                       report_line2[checklist2[field]] = evlist.items[events][fn];   
+                         if (fn=="group") { report_line2[checklist2[field]] = roles_config[get_roles_section(section)].groupname; }
+                         if (fn=="section") { report_line2[checklist2[field]] = roles_config[get_roles_section(section)].sectionname; }
+                     }
+                     if ( checklist[field].substring(0,1)=="Q" ){
+                         report_line2[checklist2[field]] = "";
+                     }
+                        
+                   }
+                   if ((report_type=="Events")|(any_qm==false)) { report_data.push(report_line2); }
+                   if (( report_type=="Events & QM Lists")&(any_qm==true)) {
+                     if (report_config[section].eventqm[evlist.items[events].eventid]!=null) {
+                     var qmlists =  JSON.parse(report_config[section].eventqm[evlist.items[events].eventid]);
+                         if (qmlists.data.lists.length == 0 ) { report_data.push(report_line2); }
+                     for (var qm_list in qmlists.data.lists) {
+                       for ( var qm_list_item in qmlists.data.lists[qm_list].items) {
+                         var report_line = new Object();  
+                         for (var key in report_line2) {
+                          //copy all the fields
+                          report_line[key] = report_line2[key];
+                         }
+                          for (var field in checklist ) {
+                             var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
+                             if ( checklist[field].substring(0,7)=="QL|List" ){  
+                               report_line[checklist2[field]] = qmlists.data.lists[qm_list].list[fn];   
+                             }
+                             if ( checklist[field].substring(0,7)=="QI|Item" ){  
+                               report_line[checklist2[field]] = qmlists.data.lists[qm_list].items[qm_list_item][fn];   
+                             } 
+                          }
+                           report_data.push(report_line);
+                         }
+                        
+                       }
+                     } else {
+                         report_data.push(report_line2);
+                     }
+                   }                                                       
+                   }
+               }
+                  
+               
+           }
+    }
+
+  
+  // Add in 'id' needed for gridview
+   for (var id in report_data ) {    
+       report_data[id].id = id;
+   }
+   // var json_Data = JSON.stringify(report_data);
+   // $("#reportdata").text(json_Data);
+   
+    // var groupItemMetadataProvider = new 
+dialog_delay.dialog( "close" );
+select_checks2();
+}
+function select_checks2() {
+
+var searchIDs = $('#fieldtable input:checked').map(function(){ return $(this).val(); });
+    var searchIDs2 = $('#fieldtable input:checked').map(function(){ return $(this).attr("name");});
+ var checklist = searchIDs.get();
+    var checklist2 = searchIDs2.get();
+ga('send', 'event', 'Report', security.userid, $("#report_type option:selected" ).text());
+Slick.Data.GroupItemMetadataProvider();
+   
+    dataView = new Slick.Data.DataView( ); 
+    var Refresh = function(config) {  var config_copy = JSON.parse(JSON.stringify(config));
+                    //delete some values which are functions
+                      delete config_copy["aggregators"];
+                      delete config_copy["renderers"];
+                      if ($("#saveas_filters").val()!="on") {
+                    //    delete config_copy["exclusions"];
+                      }
+                      delete config_copy["sorters"];                                    
+                      delete config_copy["derivedAttributes"];
+                    //delete some bulky default values
+                     // delete config_copy["rendererOptions"];
+                      delete config_copy["localeStrings"];
+   $("#SavedReports").val("blank");
+   disp($("input[name='display_total']:checked").val()=="on");
+   var searchIDs = $('#fieldtable input:checked').map(function(){    
+      return $(this).val();
+    });
+    var checklist = searchIDs.get();
+        var full_config = new Object();
+            full_config.pivot = config_copy;
+            full_config.report_type =     $( "#report_type option:selected" ).text();
+            full_config.rotate = [];
+            $("#reportoutput").find('input.pvtrotate:checked').each(function() {
+            full_config.rotate.push($(this).data("rotate")); 
+            });
+            full_config.fields = checklist;
+            // full_config.display_total = ($("#dialog-form3 input[name='display_total']:checked").val()=="on");
+                    // $("#config_json").val(JSON.stringify(config_copy, undefined, 2));
+            $("#config_json").val(JSON.stringify(full_config, undefined, 2));
+ };
+    
+		var sortAs =           $.pivotUtilities.sortAs;
+        var naturalSort2 =           $.pivotUtilities.naturalSort2;
+        var renderers = $.extend($.pivotUtilities.renderers, 
+                        $.pivotUtilities.gchart_renderers, $.pivotUtilities.pdf_renderers);
+        var agg = "Count";
+        var rows = new Array();
+        var cols = new Array();
+        var vals = new Array();
+        var rendname = "Table";
+        var rotate = new Array();
+        var exclusions = new Object;
+        var inclusions = new Object;
+        var refresh_layout = false;
+        if($("#SavedReports option:selected").text() != "") {
+         for (var report in report_list.reports) {
+        if (report_list.reports[report].name==$("#SavedReports option:selected").text()) {
+        var saved_report = JSON.parse(report_list.reports[report].def);
+         }
+}
+        //var saved_report = JSON.parse(GM_getValue($("#SavedReports option:selected").text()));
+        $("#SavedReports").val("blank");
+         if (saved_report.hasOwnProperty("pivot")) {
+         rows = saved_report.pivot.rows;
+         rendname = saved_report.pivot.rendererName;
+         if(typeof saved_report.pivot.exclusions  === "undefined") {
+         } else {  
+exclusions = saved_report.pivot.exclusions;
+inclusions = saved_report.pivot.inclusions;
+}
+         cols = saved_report.pivot.cols;
+         vals = saved_report.pivot.vals;
+         rotate = saved_report.rotate;
+         disp(saved_report.display_total);
+                $("#dialog-form3 input[name='display_total']").prop('checked',saved_report.display_total); 
+            
+         refresh_layout = true;
+         agg = saved_report.pivot.aggregatorName;
+        } else {slick_full_config = saved_report; }
+        	
+        }
+		var pvtOpts = {
+			renderers: renderers,
+            onRefresh: Refresh,
+            rendererName : rendname,
+            rows: rows,
+            cols: cols,
+            vals: vals,
+            exclusions: exclusions,
+            inclusions: inclusions,
+            rotate : rotate,
+            sorters: function(attr) {
+                        if(attr == "Month of Birth") {
+                            return sortAs(["Jan","Feb","Mar","Apr", "May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]);
+                        }
+                        if((attr == "Patrol Role")|(attr == "Role ID")) {
+                            return naturalSort2();
+                        }
+            },
+			aggregatorName : agg
+		};
+
+ 
+//debugger;
+   
+var display_option 
+display_option = $('input[name=outputtype]:checked').val();
+display_option = $('input[type=radio][name=render]:checked').val();
+    if (display_option=='pivot') {
+    $("#reportoutput").pivotUI(report_data, pvtOpts,refresh_layout);
+    } else {
+ 
+       
+        var report_output_divs, triangleLink, field_div, btn, field
+    //    if (1==1) {
+ report_output_divs = $("<ul>").addClass("reportfields").attr("id", "listfields");
+  
+  for ( field in checklist ) { 
+      if (columnsizes.hasOwnProperty(checklist2[field])==false) 
+      {
+          columnsizes[checklist2[field]] = 100;
+      };
+      // Assemble Unique Values & Counts
+       var consolidated, consolidatedc 
+             
+        // Start of fn
+        
+        
+      fndd = function(c) {
+          var attrElem, btns, checkContainer, filterItem, filterItemExcluded, hasExcludedItem, keys, len3, o, ref2, showFilterList, triangleLink, updateFilter, v, valueList;
+          
+           // keys = (function() {
+          //  var results;
+          //  results = [];
+          //  for (k in axisValues[c]) {
+         //     results.push(k);
+        //    }
+        //    return results;
+        //    })();   // keys
+          if (slick_full_config.hasOwnProperty("exclusions")) { exclusions = slick_full_config.exclusions };  
+          hasExcludedItem = false;
+          if (exclusions.hasOwnProperty(c)==true) {  hasExcludedItem = true; };
+          valueList = $("<div>").addClass('pvtFilterBox').hide();
+          valueList.append($("<h4>").text(c + " (" + consolidated.length + ")"));
+          //if (keys.length > opts.menuLimit) {
+         //   valueList.append($("<p>").html(opts.localeStrings.tooMany));
+         // } else {
+            
+            btns = $("<p>").appendTo(valueList);
+          var groupitem = false;
+          if(slick_full_config.hasOwnProperty("grid")) {
+            if (slick_full_config.grid.hasOwnProperty("groups")) {
+              // do we have a group on this field?
+                  groupitem = (slick_full_config.grid.groups.indexOf(c)!=-1);              //}
+            }
+          }
+  
+         
+          $("<input>").attr("type", "checkbox").addClass('slkgrp').attr("checked", groupitem).data("group", [c]).appendTo(btns);
+          
+          btns.append("Group Field");
+          btns.append($("<br>"));
+            btns.append($("<button>", {
+              type: "button"
+            }).html("Select All").bind("click", function() {
+              return valueList.find(".pvtCheckContainer input:visible").prop("checked", true);
+            }));
+            btns.append($("<button>", {
+              type: "button"
+            }).html("Select None").bind("click", function() {
+              return valueList.find(".pvtCheckContainer input:visible").prop("checked", false);
+            }));
+            btns.append($("<br>"));
+            btns.append($("<input>", {
+              type: "text",
+              placeholder: "Filter",
+              "class": "pvtSearch"
+            }).bind("keyup", function() {
+              var filter;
+              filter = $(this).val().toLowerCase();
+              return valueList.find('.pvtCheckContainer p').each(function() {
+                var testString;
+                testString = $(this).text().toLowerCase().indexOf(filter);
+                if (testString !== -1) {
+                  return $(this).show();
+                } else {
+                  return $(this).hide();
+                }
+              });
+            }));
+            checkContainer = $("<div>").addClass("pvtCheckContainer").appendTo(valueList);
+           // ref2 = keys.sort(getSort(opts.sorters, c));
+            for (o = 0, len3 = consolidated.length; o < len3; o++) {
+              //k = ref2[o];
+              //v = axisValues[c][k];
+              k = consolidated[o];
+              v = consolidatedc[consolidated[o]];
+              filterItem = $("<label>");
+              filterItemExcluded = false;
+              //if (opts.inclusions[c]) {
+            //   filterItemExcluded = (indexOf.call(opts.inclusions[c], k) < 0);
+           //   } else if (opts.exclusions[c]) {
+            //    filterItemExcluded = (indexOf.call(opts.exclusions[c], k) >= 0);
+           //   }
+           //   hasExcludedItem || (hasExcludedItem = filterItemExcluded);
+         //     $("<input>").attr("type", "checkbox").addClass('pvtFilter').attr("checked", true).data("filter", [c, k]).appendTo(filterItem);
+         slk_exc_tick = true;
+         if (exclusions.hasOwnProperty(c)==true) 
+         {
+          if (exclusions[c].find( function (a) { return a==k; }) != null) { slk_exc_tick = false }; 
+         }
+         $("<input>").attr("type", "checkbox").addClass('pvtFilter').attr("checked", slk_exc_tick).data("filter", [c, k]).appendTo(filterItem);
+              filterItem.append($("<span>").html(k));
+              filterItem.append($("<span>").text(" (" + v + ")"));
+              checkContainer.append($("<p>").append(filterItem));
+            }
+          
+          updateFilter = function() {
+            var groupitem;
+            groupitem = (valueList.find(".slkgrp:checked").length > 0);
+            var unselectedCount;
+            unselectedCount = valueList.find("[type='checkbox'].pvtFilter").length  - valueList.find("[type='checkbox'].pvtFilter:checked").length;
+                          
+            if (unselectedCount > 0) {
+              attrElem.addClass("pvtFilteredAttribute");
+            } else {
+              attrElem.removeClass("pvtFilteredAttribute");
+            }
+          if (groupitem) {  attrElem.addClass("pvtGroupAttribute");
+            } else {
+              attrElem.removeClass("pvtGroupAttribute");
+            }
+          collect_slickfilters() 
+          slickupdate(dataView,grid,checklist,false,true); 
+              return valueList.toggle(0, slickupdate(dataView, grid, checklist,false,true));
+          };
+          $("<p>").appendTo(valueList).append($("<button>", {
+            type: "button"
+          }).text("OK").bind("click", updateFilter));
+          showFilterList = function(e) {
+            var clickLeft, clickTop, ref3;
+            ref3 = $(e.currentTarget).position(), clickLeft = ref3.left, clickTop = ref3.top;
+            valueList.css({
+              left: clickLeft + 10,
+              top: clickTop + 10
+            }).toggle();
+            valueList.find('.pvtSearch').val('');
+            return valueList.find('.pvtCheckContainer p').show();
+          };
+          triangleLink = $("<span>").addClass('pvtTriangle').html(" &#x25BE;").bind("click", showFilterList);
+          i = 1;
+          attrElem = $("<li>").attr('id',c).addClass("axis_" + i).append($("<span>").addClass('pvtAttr').text(c).data("attrName", c).append(triangleLink));
+          if (hasExcludedItem) {
+            attrElem.addClass('pvtFilteredAttribute');
+          }
+          if (groupitem) {  attrElem.addClass("pvtGroupAttribute");
+            } 
+           report_output_divs.append(attrElem).append(valueList);
+  //        $("#reportoutput").append(attrElem.prop('outerHTML')).append(valueList.prop('outerHTML'))
+    //      return attrElem.bind("dblclick", showFilterList);
+          return attrElem.bind("dblclick", showFilterList);
+    };
+  
+        //// ENd of fn
+        
+       
+      consolidated = []
+      consolidatedc = []
+          for (var value in report_data) {
+              if (consolidated.indexOf(report_data[value][checklist2[field]]) < 0 ) {
+                   consolidated.push(report_data[value][checklist2[field]]) ;
+                   consolidatedc[report_data[value][checklist2[field]]] = 1;
+              } else
+              {
+                   consolidatedc[report_data[value][checklist2[field]]] += 1;
+              }
+             
+          }
+      consolidated.sort();
+     var test_output =  fndd(checklist2[field]);
+   
+   
+  }  
+  var sortlist = $("<ul>").attr("id","fieldsortlist");   
+  var sortlistinc = new Array ();
+  sortlistinc = [];    
+  if(slick_full_config.hasOwnProperty("grid")) {
+    if (slick_full_config.grid.hasOwnProperty("sort")) {
+      for (field in slick_full_config.grid.sort) {
+          if (checklist2.indexOf(slick_full_config.grid.sort[field].name)!=-1) {
+              sortlistinc.push(slick_full_config.grid.sort[field].name);
+              if (slick_full_config.grid.sort[field].ascend) {
+              sortlist.append("<li class=\"sortAttr\"><span class=\"sortAttrorder ui-icon ui-icon-arrowthick-1-n\" style=\"float:left;\"></span>"+slick_full_config.grid.sort[field].name+"</li>");             
+              } else
+               sortlist.append("<li class=\"sortAttr\"><span class=\"sortAttrorder ui-icon ui-icon-arrowthick-1-s\" style=\"float:left;\"></span>"+slick_full_config.grid.sort[field].name+"</li>");
+              {
+              }
+          }
+      }
+    }
+  }
+  if(slick_full_config.hasOwnProperty("grid")) {
+    if (slick_full_config.grid.hasOwnProperty("sizes")) {     
+        for (field in  slick_full_config.grid.sizes) {
+            columnsizes[field] = slick_full_config.grid.sizes[field];
+        }
+    }
+  }
+  for ( field in checklist ) { 
+    if (sortlistinc.indexOf(checklist2[field])==-1) {
+    sortlist.append("<li class=\"sortAttr\"><span class=\"sortAttrorder ui-icon ui-icon-arrowthick-1-n\" style=\"float:left;\"></span>"+checklist2[field]+"</li>");
+    }
+  }
+  //report_output_divs = report_output_divs+  "</ul><br><ul id=\"selfields\" class=\"reportfields\" style=\"list-style-type: none; margin: 0; float: left; margin: 10px; background: #eee;  width: 95% ; padding: 5px; border-style: solid!important; \"></ul><div id=\"reportoutput2\" style=\" min-height: 300px; height: 95%; width: 95%; margin: 30px;border-style: solid!important;\"></div>"
+  
+  $('#reportoutput').html(""); 
+  $('#reportoutput').append('<table id="reportoutputtable"></table>');
+  $('#reportoutput').children().append("<tr><td rowspan=3 id=\"tablesortlist\" width=\"20%\"></td><td id=\"tablereportoutput\"></td></tr><tr><td id=\"tablereportoutput2\"></td></tr><td id=\"tablereportoutput3\"></td></tr>");
+  $("#tablereportoutput").html(report_output_divs);  
+  $("#tablereportoutput2").append($("<ul>").attr('id', 'selfields').addClass("reportfields"));//.attr('width', $("#reportoutput").width()));
+  $("#tablereportoutput3").append($("<div>").attr('id', 'reportoutput2'));
+  $("#tablereportoutput3").css('max-width', (0.8*$("#reportoutput").width())+"px");
+  $("#tablesortlist").html(sortlist);
+  $("#tablesortlist").prepend("Output: <select class=\"slickot\" ><option value=\"grid\">Grid</option><option value=\"pdf\">PDF</option><option value=\"pdfd\">PDF Download</option></select><br><button id=\"expall\" type=\"button\">Expand All</button><button id=\"collall\" type=\"button\">Collapse All</button><br><b>Sort Sequence</b>");
+  if(slick_full_config.hasOwnProperty("output_type")) {
+     $(".slickot").val(slick_full_config.output_type);
+  }
+  $("#reportoutput").wrapInner("<div id=\"Test\"></div>");
+  $(".sortAttrorder").click(function () { if ($(this).hasClass('ui-icon-arrowthick-1-n')) { $(this).addClass('ui-icon-arrowthick-1-s'); $(this).removeClass('ui-icon-arrowthick-1-n'); }
+                                        else { $(this).addClass('ui-icon-arrowthick-1-n'); $(this).removeClass('ui-icon-arrowthick-1-s'); }
+                                        slickupdate(dataView,grid,checklist,false,false);
+                                        });
+  $( "#fieldsortlist" ).sortable( { update: function( event, ui ) { slickupdate(dataView,grid,checklist,false,false); }});
+  $( "#fieldsortlist" ).disableSelection();
+  $(".slickot").change( function () {   if ($(".slickot option:selected").text()=="Grid") { grid = new Slick.Grid("#reportoutput2", dataView, columns, options);grid.invalidateAllRows();
+    grid.render(); grid.resizeCanvas();slick_click (checklist);} else {slick_pdf(); };slickupdate(dataView,grid,checklist,false,false);  } );
+  $("#tablesortlist").on('click', '#collall',function() {dataView.collapseAllGroups(); if ($(".slickot option:selected").text()=="Grid") {
+    grid.invalidateAllRows();
+    grid.render(); grid.resizeCanvas();;} else { slick_pdf() };} );
+   $("#tablesortlist").on('click', '#expall',function() {dataView.expandAllGroups(); if ($(".slickot option:selected").text()=="Grid") {
+    grid.invalidateAllRows();
+    grid.render(); grid.resizeCanvas();;} else { slick_pdf() };} );      
+ // $("#tablesortlist").on('click', '#expall',function() {dataView.expandAllGroups();slickupdate(dataView,grid,checklist,false);} );
+  // LOok at Config
+var columns = []; // These are the columns in the grid...
+  var lis = document.getElementById("listfields").getElementsByTagName("li");
+// Rebuild the Grid if we have any config
+  if (slick_full_config.hasOwnProperty("grid")) {
+    columns = [];
+   for (var i in slick_full_config.grid.rows) {
+
+       var element = document.getElementById(slick_full_config.grid.rows[i]);
+       
+       $('#selfields').append(element);
+       if (element != null) {
+       var col = new Object();
+             col.id = slick_full_config.grid.rows[i];
+             col.name = col.id;
+             col.field =  col.id;
+             col.resizable = true;
+             col.sortable = false;
+             col.width = columnsizes[col.id];
+             //col.width = 200;
+              
+              columns.push(col);
+       }
+   }
+    var lis = document.getElementById("selfields").getElementsByTagName("li");
+         
+         
+          for (var i = 0; i < lis.length; i++) { 
+           
+             
+          }
+  } 
+        
+ 
+  var options = {
+    enableCellNavigation: true,
+    enableColumnReorder: false,
+   // forceFitColumns: true,
+  //    multiColumnSort: true
+ //     autoHeight: true
+  };
+  //var dataView;
+  
+  $( "#selfields, #listfields" ).sortable({
+  connectWith: ".reportfields",
+  placeholder: "ph",
+      update: function( event, ui ) { 
+          var lis = document.getElementById("selfields").getElementsByTagName("li");
+          columns = [];
+         
+          for (var i = 0; i < lis.length; i++) { 
+           
+             var col = new Object();
+             col.id = lis[i].id;
+             col.name = lis[i].id;
+             col.field =  lis[i].id;
+             col.resizable = true;
+             col.sortable = false;
+              col.width = columnsizes[col.id];
+             //col.width = 200;
+              columns.push(col);
+          }
+          grid.setColumns(columns);
+          slickupdate(dataView,grid,checklist,false,false);
+      }
+}); 
+      
+  dataView.beginUpdate();
+  dataView.setItems(report_data);
+  dataView.setFilter(filterslick);
+  dataView.endUpdate();
+  grid = new Slick.Grid("#reportoutput2", dataView, columns, options);
+  
+   //grid.registerPlugin(groupItemMetadataProvider);
+  //grid.setSelectionModel(new Slick.CellSelectionModel());
+        
+    //$("#dialog-form3 input[name='display_total']:checked").val()
+  //       grid.onSort.subscribe(function(e, args) {
+  //      var comparer = function(a, b) {
+ //   return (a[args.sortCol.field] > b[args.sortCol.field]) ? 1 : -1;
+ // }
+  //      dataView.sort(comparer, args.sortAsc);
+//});
+        
+        slickupdate(dataView,grid,checklist,true,true);
+        
+
+        
+        
+
+    }   
+    
+    
+    //$("#config_json").bind("blur", function(event){
+ //                   var a = JSON.parse($(this).val());
+ //                   a.onRefresh=Refresh;
+                    
+                    
+        // google.load("visualization", "1", {packages:["corechart", "charteditor"]});
+
+ //                   $("#reportoutput").pivotUI(report_data,a,true);
+ //               });    
+ }
+function initCharts() {
+ //   alert("Hi");
+}
+
+
+function xls_dialog_open() {
+//alert("Hi");
+
+function Workbook() {
+	if(!(this instanceof Workbook)) return new Workbook();
+	this.SheetNames = [];
+	this.Sheets = {};
+}
+if (report_data.length>0) { 
+var wb = new Workbook(), ws = XLSX.utils.json_to_sheet(report_data);
+/* add worksheet to workbook */
+ws_name = "osmr"
+wb.SheetNames.push(ws_name);
+;
+wb.Sheets[ws_name] = ws;
+var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
+function s2ab(s) {
+	var buf = new ArrayBuffer(s.length);
+	var view = new Uint8Array(buf);
+	for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+	return buf;
+}
+saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), "test.xlsx")
+
+} else
+{
+$("#confirmation").text("No data to Export")
+        dialog_confirm.dialog({ title: "Message" });
+        dialog_confirm.dialog("open");
+}
+};
+
+function disp(ticked){
+  //  $(".display_total").change(disp());
+    $(".pvtTotal").toggle(ticked);
+    $(".pvtTotalLabel").toggle(ticked);
+    $(".pvtGrandTotal").toggle(ticked);
+}
+
+
+
+
+function getAge(dateString,dateString2, ageformat) {
+
+  if (dateString2=="") {
+  var now = new Date();
+  var today = new Date(now.getYear(),now.getMonth(),now.getDate());
+
+  var yearNow = now.getYear();
+  var monthNow = now.getMonth();
+  var dateNow = now.getDate();
+  } else
+  {
+    var now = new Date(dateString2);
+    var yearNow = now.getYear();
+     var monthNow = now.getMonth();
+     var dateNow = now.getDate();
+  }
+  var dob = new Date(dateString);
+
+  var yearDob = dob.getYear();
+  var monthDob = dob.getMonth();
+  var dateDob = dob.getDate();
+  var age = {};
+  var ageString = "";
+  var yearString = "";
+  var monthString = "";
+  var dayString = "";
+  var monthAge;
+  var dateAge;
+
+  yearAge = yearNow - yearDob;
+
+  if (monthNow >= monthDob)
+    monthAge = monthNow - monthDob;
+  else {
+    yearAge--;
+    monthAge = 12 + monthNow -monthDob;
+  }
+
+  if (dateNow >= dateDob)
+    var dateAge = dateNow - dateDob;
+  else {
+    monthAge--;
+    var dateAge = 31 + dateNow - dateDob;
+
+    if (monthAge < 0) {
+      monthAge = 11;
+      yearAge--;
+    }
+  }
+
+  age = {
+      years: yearAge,
+      months: monthAge,
+      days: dateAge
+      };
+
+  if ( age.years > 1 ) yearString = " years";
+  else yearString = " year";
+  if ( age.months> 1 ) monthString = " months";
+  else monthString = " month";
+  if ( age.days > 1 ) dayString = " days";
+  else dayString = " day";
+
+    if (ageformat=="a") {
+  if ( (age.years > 0) && (age.months > 0) && (age.days > 0) )
+    ageString = age.years + yearString + ", " + age.months + monthString + ", and " + age.days + dayString + " old.";
+  else if ( (age.years == 0) && (age.months == 0) && (age.days > 0) )
+    ageString = "Only " + age.days + dayString + " old!";
+  else if ( (age.years > 0) && (age.months == 0) && (age.days == 0) )
+    ageString = age.years + yearString + " old. Happy Birthday!!";
+  else if ( (age.years > 0) && (age.months > 0) && (age.days == 0) )
+    ageString = age.years + yearString + " and " + age.months + monthString + " old.";
+  else if ( (age.years == 0) && (age.months > 0) && (age.days > 0) )
+    ageString = age.months + monthString + " and " + age.days + dayString + " old.";
+  else if ( (age.years > 0) && (age.months == 0) && (age.days > 0) )
+    ageString = age.years + yearString + " and " + age.days + dayString + " old.";
+  else if ( (age.years == 0) && (age.months > 0) && (age.days == 0) )
+    ageString = age.months + monthString + " old.";
+  else ageString = "Oops! Could not calculate age!";
+    }
+    if (ageformat=="y") {
+        ageString = age.years;
+    }
+if (ageformat=="s") {
+        ageString = age.years + "/" + age.months;
+    }
+  return ageString;
+}
+
+function print_report() {
+    var display_option = $('input[name=outputtype]:checked').val();
+    var mywindow = window.open();
+     if (display_option=='pivot') {
+ 
+     mywindow.document.write('<html><head><title>my div</title><style>');
+    mywindow.document.write('table, th, td { border: 1px solid black; border-collapse: collapse; font-family: Verdana,Arial,sans-serif; font-size: 8pt;} .pvtAxisLabel { background: grey;}');
+                            if($("#dialog-form3 input[name='display_total']:checked").val()==false) {
+    mywindow.document.write('.pvtTotal  {display: none;} .pvtTotalLabel {display: none;} .pvtGrandTotal {display: none;}');
+    }
+   mywindow.document.write('</style></head><body>');
+    if ($('.pvtTable').length>0) {
+        mywindow.document.write($('.pvtTable').prop('outerHTML')); } else {
+            mywindow.document.write($(".pvtRendererArea").prop('outerHTML')); }
+   mywindow.document.write('</body></html>');
+
+    
+     }
+    //var test = dataView.getItems();
+    var groupings  = dataView.getGrouping();
+     var table_row = new Array; 
+    var pdf_doc = new Object;
+      var pdf_table = new Object ;
+      pdf_table.table = new Object;
+      pdf_table.table.headerRows = 1;
+      pdf_table.table.body = new Array;
+      var table_row = new Array;  
+      for (var j in grid.getColumns()) {
+        table_row.push(grid.getColumns()[j].name);
+      }
+      pdf_table.table.body.push(table_row);
+      for (var j=0; j < dataView.getLength(); j++) {
+      table_row = []; 
+      var rowitem = dataView.getItem(j);
+      if (rowitem.hasOwnProperty("__group")) {
+           for (var k in grid.getColumns()) {
+           if (k==0) {
+               var pdf_table_cell = new Object;
+               pdf_table_cell.text = groupings[rowitem.level].getter+":"+rowitem.value+"   ("+rowitem.count+")";
+               pdf_table_cell.colSpan =  grid.getColumns().length;
+               table_row.push(pdf_table_cell);
+           } else
+           {
+               table_row.push(" ");
+           }
+           }
+      } else
+      {
+       for (var k in grid.getColumns()) {
+        //var prop = grid.getColumns()[j].name;
+         var pdf_table_cell = new Object;
+         pdf_table_cell.text = rowitem[(grid.getColumns()[k].name)].toString()
+         table_row.push(pdf_table_cell);
+     //   table_row.push(rowitem[(grid.getColumns()[k].name)]);
+      }  
+      }
+      pdf_table.table.body.push(table_row);    
+      }
+   pdf_doc.content = pdf_table;
+   pdf_doc.pageSize =  $( "select[name=page_size" ).val();
+   pdf_doc.pageOrientation =  $( "select[name=page_orient" ).val(); 
+                var defaultStyle = new Object;
+                defaultStyle.fontSize = $( "input[name=display_size" ).val();
+                pdf_doc.defaultStyle = defaultStyle;
+        
+                //pdf_base
+//var pdf_doc_copy = new Object;
+pdf_doc_copy = Object.assign({}, pdf_doc);
+
+                pdfMake.createPdf(pdf_doc).getDataUrl(function(outDoc) {
+                $("#pdf_viewer").attr("src", outDoc);
+                });
+                $("#reportoutput2").html("<iframe id=\"pdf_viewer\" width=100% style = \"min-width: 700px; height: 800px;\"><iframe>");
+}
+
+function api_settings_table() {
+//JSON.parse(api_setup[2023]).apis[3].permissions
+if ((section_config!=undefined)&&(Object.keys(section_config).length>0)) {
+$("#dialog-delay").dialog({ position: {'my': 'center',  'at': 'center top+300', of: window } });
+dialog_delay.dialog( "open" );
+do_api_setup(0);
+} else
+{
+  $("#confirmation").text("You need to logon")
+        dialog_confirm.dialog({ title: "Message" });
+        dialog_confirm.dialog("open");
+};
+}
+
+function api_visual(value, html)
+{
+if (value > 0) {
+  html = html + "<td width=10%><img src=\"icons\\green.png\"></td>"
+}
+else
+{
+html = html + "<td width=10%><img src=\"icons\\red.png\"></td>"
+} 
+return html;
+}
+function api_settings_table_draw() {
+dialog_delay.dialog( "close" );
+var html = "<table class=\"permissions\"><tr><th>Section</th><th>Member</th>";
+html=html+"<th>Flexi</th><th>Badge</th><th>QM</th><th>Events</th></tr>"
+ for (var i = 0; i < roles_config.length; i++) { 
+   html = html + "<tr><td width=50%>"+roles_config[i].sectionname+"</td>"
+   var apidef = JSON.parse(api_setup[roles_config[i].sectionid]);
+   for (var j = 0; j < (apidef.apis).length; j++)
+   {
+     if (apidef.apis[j].apiid==api_number) 
+     {
+      
+      // for (var perm in apidef.apis[j].permissions) 
+      // {
+      //   html = html + perm + ":" + apidef.apis[j].permissions[perm];
+      // }
+      if (apidef.apis[j].permissions.empty=="true")
+      {
+        html = html + "<td colspan=5><img src=\"icons\\red.png\">No Access</td>"
+      } else
+      {
+       html = api_visual(apidef.apis[j].permissions.member, html);
+       html = api_visual(apidef.apis[j].permissions.flexi, html);
+       html = api_visual(apidef.apis[j].permissions.badge, html);
+       html = api_visual(apidef.apis[j].permissions.quartermaster, html);
+       html = api_visual(apidef.apis[j].permissions.events, html);
+      }
+       html = html + "</td>";
+     }
+   }
+   html = html + "</tr>";
+ }
+html = html +"<tr><td colspan=6>Check the permissions of David's API for the sections you manage. You can only report on  areas with the green tick in the grid above.</td></tr>"
+html = html + "</table><button onclick='$(&quot;#reportoutput_permiss&quot;).html(&quot;&quot;);'>Close Check</button>";
+$("#reportoutput_permiss").html("");
+$("#reportoutput_permiss").html(html);
+menu_closeNav();
+}
+
+function select_type(type){
+$("#pivottable").prop("checked", true)
+if (type==1) {
+$("#pivot_menu_entry").html("&#10004; Pivot Layout");
+$("#pivottable").prop("checked", true);
+$("#grid_menu_entry").html("Grid Layout");
+} else
+{
+$("#pivot_menu_entry").html("Pivot Layout");
+$("#grid_menu_entry").html("&#10004; Grid Layout");
+$("#gridtable").prop("checked", true);
+}
+select_checks2();
+}
+function select_totals() {
+if ($("#total_menu_entry").html() =="Display Totals")
+{
+$("#total_menu_entry").html("&#10004; Display Totals");
+$("#disp_totals_ck").prop('checked', true);
+} else
+{
+$("#total_menu_entry").html("Display Totals");
+$("#disp_totals_ck").prop('checked', false);
+}
+select_checks2();
+}
+
+</script>
+<div id="mySidenav" class="sidenav">
+  <a href="javascript:void(0)" class="closebtn" onclick="menu_closeNav()">&times;</a>
+
+<a href="#" style="color: #F37A1F;">File</a> 
+<a href="#"><span onclick="menu_closeNav();$('#openr_dialog').dialog({ position: {'my': 'center',  at: 'center top+200', of: window } });openr_dialog.dialog('option','title','Open Report');$('#report_template').prop('checked',false);openr_dialog.dialog( 'open' );">Open Report</span></a>
+<a href="#"><span onclick="menu_closeNav();report_saveas();">Save Report</span></a>
+<a href="#"><span onclick="menu_closeNav();$('#delr_dialog').dialog( 'option', 'position',{ my: 'center', at: 'center top+300', of: window } ); delr_dialog.dialog( 'open' );">Delete Report</span></a>
+<a href="#" style="color: #F37A1F;border: #f1f1f1;border-top-style: solid;">Format Options</a>
+<a href="#"><span id="pivot_menu_entry" onclick="select_type(1)">&#10004; Pivot Layout</span></a>
+<a href="#"><span id="grid_menu_entry" onclick="select_type(2)">Grid Layout</span></a>
+<a href="#" style="border: #f1f1f1;border-bottom-style: solid;"><span id="total_menu_entry" onclick="select_totals()" >Display Totals</span></a>
+  <a href="#"><span  onclick="pdf_dialog_open()">PDF Options</span></a>
+<a href="#"><span onclick="menu_closeNav();xls_dialog_open();">Save Data to Excel</span></a>
+ <a href="#"><span onclick="api_settings_table()">Check OSM</span></a>
+ <a href="#"><span onclick="$('#lib-thanks').dialog({ position: {'my': 'center',  at: 'center top+200', of: window } });$('#osmr_version').text(osmr_version);$('#relay_path_setting').val(relay_path); lib_thanks.dialog('open');">About</span></a>
+ <a href="#"><span onclick="var win = window.open('https://mydonate.bt.com/donation/start.html?charity=111533', '_blank');
+  win.focus();">Donate</span></a>
+  <a href="#"><span onclick="log_out()">Logout</span></a>
+  
+</div>
+<div class="osmr_toolbar">
+<span style="font-size:30px;cursor:pointer" onclick="menu_openNav()">&#9776; Online Scout Manager Reporting</span>
+<div id="osmr_logon"><span id="username_block">Username: <input type="text" name="username" id="username"></span>
+<span id="password_block">Password: <input type="password" name="password" id="password">
+<button type="button" onclick="call_report()" id="logon_button">Log On</button></span></div>
+<div id="osmr_loggedon">
+<!--<button id="logout_button" type="button" onclick="log_out()">Log Out</button> --> 
+
+
+
+<span id="reportdate_block">Date: <input type="text" name="datepicker" id="datepicker" class="ms-choice"></span><span>Section:
+<select multiple="multiple" class="section-select">
+<option></option>
+</select></span>
+<span>Report Type:<select id='report_type' name="report_type" class="ms-choice" style="width: 200px;display: inline;">
+</select></span>
+<button type="button" onclick="select_fields()" id="osmr_field"><span class="tooltiptext">Run/Edit Report</span></button>
+<div class="grid-select">
+<input id="pivottable" type="radio" name="render" value="pivot" checked="checked">
+
+<!--<label class="gridtype pivottable" for="pivottable"> <span class="tooltiptext">Pivot Table</span></label> -->
+  <input id="gridtable" type="radio" name="render" value="grid"><!--<label class="gridtype gridtable" for="gridtable"> <span class="tooltiptext">Grid Table</span></label>-->
+</div><input type="checkbox"  id="disp_totals_ck" name="display_total"><!--<label for="disp_totals_ck" id="disp_totals_ck"><span class="tooltiptext">Display Totals</span></label>-->
+
+<!--<button id="pdf_button" type="button" onclick="pdf_dialog_open()"> <span class="tooltiptext">PDF Options</span></button>-->
+
+<!--<button id="xls_button" type="button" onclick="xls_dialog_open()"> <span class="tooltiptext">XLS Download</span></button>-->
+
+
+<span><!--<button id="check_button" type="button" onclick="api_settings_table()"> <span class="tooltiptext">Check Permissions</span></button>-->
+</div></div>
+
+
+<div id = "reportoutput_permiss">
+</div>
+    
+<div id = "reportoutput">
+</div>
+
+<div id = "reportoutput_about">
+<h1>Welcome to a tool to help you generate useful reports from Online Scout Manager<h2>
+<div id="cycler">
+<img class="active" src="https://www.2ndnewhawscouts.org.uk/osmr/icons/OSMR1.jpg" alt="My image" />
+
+<img src="https://www.2ndnewhawscouts.org.uk/osmr/icons/OSMR2.jpg" alt="My image" />
+<img src="https://www.2ndnewhawscouts.org.uk/osmr/icons/OSMR3.jpg" alt="My image" />
+<img src="https://www.2ndnewhawscouts.org.uk/osmr/icons/OSMR4.jpg" alt="My image" />
+<img src="https://www.2ndnewhawscouts.org.uk/osmr/icons/OSMR5.jpg" alt="My image" />
+</div>
+<div class="osmr_description">
+<p>
+<strong>OSMR</strong> allows you to generate reports, pivot tables, charts and graphs of your Online Scout Manager data allowing you to access the data you have in <strong>OSM</strong> in a lot of new ways.</p>
+<p>You can combine data from any of the sections you have access to allowing you to generate group lists, attendees for Group event as well as producing lots of reports about specific sections. You can generate PDFs, print your reports or just see them on screen.</p>
+<p>Using a simple drag and drop interface you are in control of your data. We don't store any of your report data and all report generation is done on your PC, tablet or phone.</p>
+<p><table><tr>
+<td width=5% style="vertical-align: middle !important;">
+<img src="https://www.2ndnewhawscouts.org.uk/osmr/icons/1.jpg"></td><td width=20%>Log in using your OSM ID
+</td>
+<td width=5% style="vertical-align: middle !important;"><img src="https://www.2ndnewhawscouts.org.uk/osmr/icons/2.jpg"></td><td width=20%>Select which Sections you want to include</td>
+<td width=5% style="vertical-align: middle !important;"><img src="https://www.2ndnewhawscouts.org.uk/osmr/icons/3.jpg"></td><td width=20%>Choose the type of data you want to use</td>
+<td width=5% style="vertical-align: middle !important;"><img src="https://www.2ndnewhawscouts.org.uk/osmr/icons/fields.png"></td><td width=20%>Press the Run Report button to start!</td></tr></table></p>
+<p>It really is that simple. Once you've selected your fields you can switch between grid and pivot views adjusting which fields are displayed by draging and dropping them into the report.You can filter and group your information from the field selection boxes. Very soon you'll be able to save your report formats for future use.</p>   
+<p><strong>If you find this tool useful then please think about making a donation to my Scout Group, 2nd New Haw, using the <a href="https://mydonate.bt.com/donation/start.html?charity=111533">myDonate website</a>.</strong></p>  
+<p>Contact us via our <a href="http://osmr.freeforums.net/">Forum</a></p>
+</div>
+</div>
+
+<div id="pdf-dialog" title="PDF Options">
+<label>PDF Font Size: <input  type="text" id='display_size' name="display_size" value="6" size="3">pt</label><br>
+<label>PDF Page Size: <select id='page_size' name="page_size">
+</select>
+</label><br><span><label>PDF Orientation: <select name="page_orient" id='page_orient'><option value="landscape">Landscape</option><option value="portrait">Portrait</option></select></label></span>
+</div>
+<div id="lib-thanks" title="About">
+This is version <span id="osmr_version"></span> of OSMR<br>Fixes in this version include:<br>Corrections to saving of Reports<br>Fixes to Filter Dialogs<br><br>
+<!--Relay: <input type="text" name="fname" id="relay_path_setting"><br>-->
+We'd like to thank the authors of the following libraries:<br><br><a href="http://pdfmake.org/#/" target="_blank">PDFMake</a> for PDF Creation<br>
+<a href="https://pivottable.js.org/examples/" target="_blank">pivottable.js</a> for the pivot tables<br><a href="https://github.com/mleibman/SlickGrid" target="_blank">SlickGrid</a> for the grid display<br>
+</div>
+
+<div id="openr_dialog" title="Open Report">
+Report Name: <select id="SavedReports" class="ms-choice" style="width: 200px;display: inline;"></select>
+<input type="checkbox" name="report_template" id= "report_template" value="report_template" style="display: none !important;">
+</div>
+<div id="delr_dialog" title="Delete Report">
+Report Name: <select id="DeleteReports" class="ms-choice" style="width: 200px;display: inline;"></select>
+</div>
+<script>
+
+
+ $('#page_size').change (function() { 
+          if ($(".pvtRenderer").val()=="PDF") {
+          $(".pvtRenderer").val("PDF").change(); 
+          }
+          if ($(".slickot").val()=="pdf") {
+          $(".slickot").val("pdf").change(); 
+          }
+      });
+$('#page_orient').change (function() { 
+          if ($(".pvtRenderer").val()=="PDF") {
+          $(".pvtRenderer").val("PDF").change(); 
+          }
+          if ($(".slickot").val()=="pdf") {
+          $(".slickot").val("pdf").change(); 
+          }
+      });
+      $('#display_size').change (function() {
+           if ($(".pvtRenderer").val()=="PDF") {
+          $(".pvtRenderer").val("PDF").change(); 
+          }
+          if ($(".slickot").val()=="pdf") {
+          $(".slickot").val("pdf").change(); 
+          }
+      });
+ $('input[type=radio][name=render]').on('change', function(){
+    switch($(this).val()){
+        case 'grid' :
+         //   alert("Grid");
+            select_checks2();
+            break;
+        case 'pivot' :
+         //   alert("Pivot");
+select_checks2();
+            break;
+    }            
+});
+ $(document).on("change", "#disp_totals_ck", function () {
+    select_checks2();
+})
+$("#osmr_loggedon").toggle();
+var lib_thanks = $("#lib-thanks").dialog({ autoOpen: false, width: 600});
+var pdf_dialog = $("#pdf-dialog").dialog({ autoOpen: false });
+var size_array = [ "A4", "4A0", "2A0", "A0", "A1", "A2", "A3", "A5", "EXECUTIVE", "FOLIO", "LEGAL", "LETTER", "TABLOID" ];
+for (dodrop in size_array)
+{
+$('#page_size').append($('<option>', {value:size_array[dodrop], text:size_array[dodrop]}));
+};
+
+var openr_dialog = $("#openr_dialog").dialog({ autoOpen: false, buttons: {Cancel: function() {
+          openr_dialog.dialog( "close" );
+         },
+Run: function () {openr_dialog.dialog( "close" );select_fields();}
+}});
+
+var delr_dialog = $("#delr_dialog").dialog({ autoOpen: false, buttons: {Cancel: function() {
+          delr_dialog.dialog( "close" );
+         },
+Delete: function () {delr_dialog.dialog( "close" );delete_report();}
+}});
+
+var dialog_array = [ "Members","Members & Badges","Members & Badges Details", "Badges","Badge Stock","Events","Events & Attendance","Events & QM Lists"];
+for (dodrop in dialog_array)
+{
+$('#report_type').append($('<option>', {value:dialog_array[dodrop], text:dialog_array[dodrop]}));
+};
+
+$( "#datepicker" ).datepicker();
+$( "#datepicker" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+var today =  new Date().toISOString().slice(0,10);
+$("#datepicker").val(today);
+function pdf_dialog_open() { menu_closeNav(); 
+$("#pdf-dialog").dialog({ position: {'my': 'center',  at: 'center top+300', of: window } });
+pdf_dialog.dialog("open"); };
+var mstest = new Object();
+mstest = $('.section-select').multipleSelect({
+            placeholder: "Select a Section", width: 200
+        });
+</script>
+<textarea rows="4" cols="50" id="config_json"></textarea>
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-93668506-1', 'auto');
+  ga('send', 'pageview');
+
+
+function cycleImages(){
+      var $active = $('#cycler .active');
+      var $next = ($active.next().length > 0) ? $active.next() : $('#cycler img:first');
+      $next.css('z-index',2);//move the next image up the pile
+      $active.fadeOut(1500,function(){//fade out the top image
+	  $active.css('z-index',1).show().removeClass('active');//reset the z-index and unhide the image
+          $next.css('z-index',3).addClass('active');//make the next image the top one
+      });
+    }
+
+$(document).ready(function(){
+// run every 7s
+setInterval('cycleImages()', 7000);
+})
+
+</script>
+</body>
+
+</html>
+
+

@@ -1,0 +1,291 @@
+.reportfields { list-style-type: none; border-style: solid; float: left; margin: 10px; background: #eee; padding: 5px; width: 95%; min-height: 41px; }
+#reportoutput2 { min-height: 300px; height: 95%; width: 95%; margin: 30px;border-style: solid!important; }
+#listfields .pvtAttr {   margin: 5px; padding: 5px;  display: inline-block; vertical-align: middle;}
+#selfields .pvtAttr {    margin: 5px; padding: 5px;  display: inline-block;   vertical-align: middle;} 
+#selfields li { display: inline-block; }
+#listfields li { display: inline-block; }
+.ph { display: inline-block; min-height: 1px; line-height: 1.2em; background: #ccc; width:120px;}
+.pvtAttr {border-radius: 5px; background: white; padding: 3px; }
+.sortAttr {border-radius: 5px; background: white; padding: 3px; list-style-type: none; margin: 4px; }
+.collapsed { color: red;  list-style-type: none; cursor: pointer;}
+.collapsed::before { content: "\25B6"; color:#d45252; }
+.expanded::before { content: "\25BC"; color:#d45252; }
+.collapsed.expanded { color: black; list-style-type: none; }
+.collapsed.expanded::before { content: "\25BC"; color:#d45252;}
+li .chkfld { list-style-type: none; }
+.slick-cell {font-size: 0.9em }
+.slick-header-column {font-size: 0.9em }
+#tablesortlist {background: #eee; vertical-align: top;}
+#fieldsortlist {padding: 4px;}
+.pvtGroupAttribute { font-weight: bold; }
+img.delay_img {display: block; margin-left: auto; margin-right: auto; }
+#reportoutput {font-family: sans-serif;padding: 10px;}
+#reportoutput_about {font-family: sans-serif;padding: 10px;}
+#reportoutput_permiss {font-family: sans-serif;padding: 10px;}
+.osmr_toolbar { background-color: #4D2177; padding: 20px; color: white; font-family: sans-serif;}
+input[type=text] .osmr_toolbar {
+    background-color: white;
+    color: black;
+}
+.osmr_toolbar button#logon_button {
+    background-color: #86A20B;
+    border: none;
+    color: white;
+    text-decoration: none;
+    margin: 2px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.osmr_toolbar button#logout_button {
+    background-color: #F37A1F;
+    border: none;
+    color: white;
+    text-decoration: none;
+    margin: 2px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.ui-sortable-handle {  cursor:move; }
+.ui-sortable-helper {
+    display: block;
+}
+.ui-icon-arrowthick-1-n { cursor: pointer; }
+.ui-icon-arrowthick-1-s { cursor: pointer; }
+table.permissions tbody tr td {  vertical-align: baseline  !important; text-align: center; }
+table.permissions tbody tr td img {  vertical-align: middle  !important; }
+table.permissions tbody tr:nth-child(odd) {
+   background-color: #ccc  !important;
+}
+#config_json {margin: -1000px;}
+#datepicker {border-radius: 4px;
+    border: 1px solid #aaa;
+    width: 100px;
+    display: inline;
+    padding-left: 10px; }
+.grid-select { display: inline; }
+.grid-select input{
+    margin:0;padding:0; 
+    -webkit-appearance:none;
+       -moz-appearance:none;
+            appearance:none;
+}
+
+.pivottable{background-image:url(https://www.2ndnewhawscouts.org.uk/osmr/icons/pivot.png);}
+.gridtable{background-image:url(https://www.2ndnewhawscouts.org.uk/osmr/icons/grid.png);}
+
+.grid-select input:active +.gridtype{opacity: .9;}
+.grid-select input:checked +.gridtype{
+    -webkit-filter: none;
+       -moz-filter: none;
+            filter: none;
+}
+.gridtype{
+    cursor:pointer;
+    background-size:contain;
+    background-repeat:no-repeat;
+    display:inline-block;
+    width:35px;height:35px;
+    margin-bottom: -10px;
+    -webkit-transition: all 100ms ease-in;
+       -moz-transition: all 100ms ease-in;
+            transition: all 100ms ease-in;
+    -webkit-filter: brightness(1.8) grayscale(1) opacity(.7);
+       -moz-filter: brightness(1.8) grayscale(1) opacity(.7);
+            filter: brightness(1.8) grayscale(1) opacity(.7);
+}
+.gridtype:hover{
+    -webkit-filter: brightness(1.2) grayscale(.5) opacity(.9);
+       -moz-filter: brightness(1.2) grayscale(.5) opacity(.9);
+            filter: brightness(1.2) grayscale(.5) opacity(.9);
+}
+#pdf_button{
+    background:url(https://www.2ndnewhawscouts.org.uk/osmr/icons/adobe.png) no-repeat;
+    cursor:pointer;
+    border:none;
+    width:35px;
+    height:35px;
+    background-size: contain;
+padding-bottom: 10px;
+}
+
+
+#osmr_field{
+    background:url(https://www.2ndnewhawscouts.org.uk/osmr/icons/fields.png) no-repeat;
+    cursor:pointer;
+    border:none;
+    width:35px;
+    height:35px;
+    background-size: contain;
+padding-bottom: 10px;
+}
+
+
+#xls_button{
+    background:url(https://www.2ndnewhawscouts.org.uk/osmr/icons/download.png) no-repeat;
+    cursor:pointer;
+    border:none;
+    width:35px;
+    height:35px;
+    background-size: contain;
+padding-bottom: 10px;
+}
+
+#check_button{
+    background:url(https://www.2ndnewhawscouts.org.uk/osmr/icons/check.png) no-repeat;
+    cursor:pointer;
+    border:none;
+    width:35px;
+    height:35px;
+    background-size: contain;
+padding-bottom: 10px;
+}
+
+
+.tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    font-size: small;
+    /* Position the tooltip */
+position: absolute;
+    top: 75px;
+     
+    
+    z-index: 1;
+}
+
+#pdf_button:hover .tooltiptext {
+    visibility: visible;
+}
+.gridtype:hover .tooltiptext {
+    visibility: visible;
+}
+#check_button:hover .tooltiptext {
+    visibility: visible;
+}
+
+#osmr_field:hover .tooltiptext {
+    visibility: visible;
+}
+
+#disp_totals_ck:hover .tooltiptext {
+    visibility: visible;
+}
+
+#disp_totals_ck  + label:hover {
+ -webkit-filter: brightness(1.2) grayscale(.5) opacity(.9);
+       -moz-filter: brightness(1.2) grayscale(.5) opacity(.9);
+            filter: brightness(1.2) grayscale(.5) opacity(.9);
+}
+
+#disp_totals_ck  + label
+   {
+       background-image:url(https://www.2ndnewhawscouts.org.uk/osmr/icons/totals.png);
+       height: 35px;
+       width: 35px;
+margin-bottom: -10px;
+        background-size:contain;
+       display:inline-block;
+       padding: 0 0 0 0px;
+ -webkit-transition: all 100ms ease-in;
+       -moz-transition: all 100ms ease-in;
+            transition: all 100ms ease-in;
+    -webkit-filter: brightness(1.8) grayscale(1) opacity(.7);
+       -moz-filter: brightness(1.8) grayscale(1) opacity(.7);
+            filter: brightness(1.8) grayscale(1) opacity(.7);
+   }
+   
+#disp_totals_ck:checked + label
+    {
+        background-image:url(https://www.2ndnewhawscouts.org.uk/osmr/icons/totals.png);
+        height: 35px;
+        width: 35px; background-size:contain; margin-bottom: -10px;
+        display:inline-block;
+        padding: 0 0 0 0px;
+ -webkit-filter: none;
+       -moz-filter: none;
+            filter: none;
+    }
+
+
+#disp_totals_ck  {
+    display:none;
+  }
+
+@media print {
+  .pvtVals {
+    display: none;
+  }
+  .pvtHorizList  {
+    display: none;
+  }
+.osmr_toolbar  {
+    display: none;
+  }
+.pvtRows   {
+    display: none;
+  }
+.pvtRenderer {
+display: none;
+}
+#tablesortlist { display: none; }
+#listfields {display: none; }
+#selfields {display: none; }
+}
+
+#cycler{position:relative; z-index: -1;}
+#cycler img{position:absolute;z-index:1; border-style: solid; border: 3px; border-color:black; width: 300;}
+#cycler img.active{z-index:3}
+.osmr_description {margin-left: 350px; font-size: initial; font-weight: initial;}
+
+#xls_button:hover .tooltiptext {
+    visibility: visible;
+}
+
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 30px;
+}
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 18px;
+    font-family: sans-serif;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 32px;
+    margin-left: 50px;
+}
+.ui-widget-content #saveas_list {
+height: 200px;
+overflow: auto;
+border: 1px solid #666;
+padding: 8px;
+}
+.ui-widget-content #saveas_list a {
+text-decoration: none;
+}
+.ui-widget-content #saveas_list a:hover { background-color : lightgrey; }
