@@ -289,3 +289,4 @@ padding: 8px;
 text-decoration: none;
 }
 .ui-widget-content #saveas_list a:hover { background-color : lightgrey; }
+.template {font-style: italic;}
