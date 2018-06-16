@@ -97,7 +97,7 @@ var api_number = "42";
 var osmr_version = "1.00.00";
 var url = window.location.href
 var arr = url.split("/");
-if (arr[0]!="https:") { window.location.replace("https://www.2ndnewhawscouts.org.uk/osmr/osmr.html");};
+//if (arr[0]!="https:") { window.location.replace("https://www.2ndnewhawscouts.org.uk/osmr/osmr.html");};
 var pdf_file
 var security = new Object();
 security = null;
@@ -249,6 +249,9 @@ $("#DeleteReports").append("<option  value=\"blank\"></option>");
 $("#DeleteReports").append("<option  value=\"reports\">"+report_list.reports[report].name+"</option>");
 
     }
+for(var i = 0; i < template_report.reports.length;  i++) {
+                  $("#SavedReports").append("<option class=\"template\" value=\"reports\">"+template_report.reports[i].name+"</option>");
+                }
 
 
 
@@ -1101,6 +1104,9 @@ $.ajax({
             failure: function () { },
             complete: function (data) {
                 template_report=data.responseJSON;select_sections();
+                for(var i = 0; i < template_report.reports.length;  i++) {
+                  $("#SavedReports").append("<option class=\"template\" value=\"reports\">"+template_report.reports[i].name+"</option>");
+                }
             }
         });
  
@@ -1163,28 +1169,37 @@ function select_fields () {
      dialog.dialog( "close" );
      dialog2.dialog( "open" );
     if($("#SavedReports option:selected").text() != "") {
+         if ($("#SavedReports option:selected").hasClass("template")) {
+         for(var i = 0; i < template_report.reports.length;  i++) {
+           if (template_report.reports[i].name==$("#SavedReports option:selected").text()) {
+             var saved_report = JSON.parse(template_report.reports[i].def);
+           }
+         }   
+         } else
+         {
          for (var report in report_list.reports) {
-        if (report_list.reports[report].name==$("#SavedReports option:selected").text()) {
-        var saved_report = JSON.parse(report_list.reports[report].def);
+           if (report_list.reports[report].name==$("#SavedReports option:selected").text()) {
+             var saved_report = JSON.parse(report_list.reports[report].def);
+           }
          }
          }
          $( "#report_type" ).val(saved_report.report_type);
-        if (saved_report.hasOwnProperty("pivot")) {
-          $('input[name="outputtype"][value="pivot"]').prop('checked', true);
+         if (saved_report.hasOwnProperty("pivot")) {
+           $('input[name="outputtype"][value="pivot"]').prop('checked', true);
            $("#pivottable").prop("checked", true);
            $("#grid_menu_entry").html("Grid Layout");
            $("#pivot_menu_entry").html("&#10004; Pivot Layout");
 
-        } else
-        {
+          } else
+          {
              $('input[name="outputtype"][value="grid"]').prop('checked', true);
-$("#gridtable").prop("checked", true);
-$("#grid_menu_entry").html("&#10004; Grid Layout");
-  $("#pivot_menu_entry").html("Pivot Layout");
+             $("#gridtable").prop("checked", true);
+             $("#grid_menu_entry").html("&#10004; Grid Layout");
+             $("#pivot_menu_entry").html("Pivot Layout");
 
 
-        }
-    }
+          }
+     }
      $( "#progressbar" ).show();
      $( ".progress-label" ).show();
      $("#fieldlist").hide();
@@ -1523,13 +1538,22 @@ function assemble_data2() {
     var checklist = searchIDs.get();
     var saved_report = new Object();
      if($("#SavedReports option:selected").text() != "") {
+      if ($("#SavedReports option:selected").hasClass("template")) {
+        for(var i = 0; i < template_report.reports.length;  i++) {
+           if (template_report.reports[i].name==$("#SavedReports option:selected").text()) {
+             var saved_report = JSON.parse(template_report.reports[i].def);
+           }
+         }  
+       } else {
        for (var report in report_list.reports) {
          if (report_list.reports[report].name==$("#SavedReports option:selected").text()) {
         var saved_report = JSON.parse(report_list.reports[report].def);
          }
        }
+       }
        // var saved_report = JSON.parse(GM_getValue($("#SavedReports option:selected").text()));
          checklist = saved_report.fields;
+       
      }
     var report_type = $( "#report_type option:selected" ).text();
     $("#fieldlist").empty();
@@ -2662,11 +2686,19 @@ Slick.Data.GroupItemMetadataProvider();
         var inclusions = new Object;
         var refresh_layout = false;
         if($("#SavedReports option:selected").text() != "") {
+        if ($("#SavedReports option:selected").hasClass("template")) {
+        for(var i = 0; i < template_report.reports.length;  i++) {
+           if (template_report.reports[i].name==$("#SavedReports option:selected").text()) {
+             var saved_report = JSON.parse(template_report.reports[i].def);
+           }
+         }  
+       } else {
          for (var report in report_list.reports) {
         if (report_list.reports[report].name==$("#SavedReports option:selected").text()) {
         var saved_report = JSON.parse(report_list.reports[report].def);
          }
-}
+        }
+        }
         //var saved_report = JSON.parse(GM_getValue($("#SavedReports option:selected").text()));
         $("#SavedReports").val("blank");
          if (saved_report.hasOwnProperty("pivot")) {
@@ -3321,7 +3353,7 @@ html=html+"<th>Flexi</th><th>Badge</th><th>QM</th><th>Events</th></tr>"
    }
    html = html + "</tr>";
  }
-html = html +"<tr><td colspan=6>Check the permissions of David's API for the sections you manage. You can only report on  areas with the green tick in the grid above.</td></tr>"
+html = html +"<tr><td colspan=6>Check the permissions of OSMR API for the sections you manage. You can only report on  areas with the green tick in the grid above.</td></tr>"
 html = html + "</table><button onclick='$(&quot;#reportoutput_permiss&quot;).html(&quot;&quot;);'>Close Check</button>";
 $("#reportoutput_permiss").html("");
 $("#reportoutput_permiss").html(html);
