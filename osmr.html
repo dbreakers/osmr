@@ -97,7 +97,7 @@ var api_number = "42";
 var osmr_version = "1.00.00";
 var url = window.location.href
 var arr = url.split("/");
-if (arr[0]!="https:") { window.location.replace("https://www.2ndnewhawscouts.org.uk/osmr/osmr.html");};
+//if (arr[0]!="https:") { window.location.replace("https://www.2ndnewhawscouts.org.uk/osmr/osmr.html");};
 var pdf_file
 var security = new Object();
 security = null;
@@ -992,7 +992,7 @@ $("#osmr_logon").toggle("slow");
 $("#osmr_loggedon").toggle("slow");
 }
 $.ajaxSetup({
-    async: false
+    async: true
 });
 $.getJSON( "osmr_config.json", function( data ) { 
 api_number = data.api;
@@ -1080,6 +1080,24 @@ p2 = [];
          c = c + 1;
       if (c==Object.keys(section_config).length) {
             api_settings_table_draw();
+      } else
+      {do_api_setup(c)};
+    });
+}
+
+function do_api_setup2(c) {
+var url = relay_path + '?osmpath=ext/settings/access/&action=getAPIAccess&sectionid='+Object.keys(section_config)[c];
+p2 = [];
+    if (security !== null ) {
+      p2['secret'] = security.secret;
+      p2['userid'] = security.userid;
+    }
+    var obj = $.extend({}, p2);
+    $.post(url,$.param(obj),function(data,status){
+         api_setup[Object.keys(section_config)[c]] = data;
+         c = c + 1;
+      if (c==Object.keys(section_config).length) {
+            api_settings_assess_access();
       } else
       {do_api_setup(c)};
     });
@@ -1210,7 +1228,7 @@ function select_fields () {
     report_config = [];
     for(var property in section_config) {
         if(mstest.multipleSelect("getSelects").indexOf(property)>=0) {
-         //alert(property+"  checked");
+        // alert(property+"  checked");
          for(var termnumber in terms_config[property]) {
              if ((terms_config[property][termnumber].startdate <= datepicker.value) && (terms_config[property][termnumber].enddate >= datepicker.value)) {
                  //alert(terms_config[property][termnumber].name);
@@ -1247,6 +1265,17 @@ function select_fields () {
             get_data_line.field = "badge_stock";
             get_data_array.push(get_data_line);
         }
+
+        if (report_type == "QM List") {
+           var get_data_line = new Object();
+            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/quartermaster/?action=getListOfLists&section='+section_config[section].section_type+'&sectionid='+section;
+            get_data_line.data = report_config[section];
+            get_data_line.olddata = old_report_config[section];    
+            get_data_line.type = "GET";
+            get_data_line.field = "qm_list";
+            get_data_array.push(get_data_line);
+        }
+
         if ((report_type == "Members")|(report_type == "Members & Badges")|(report_type=="Events & Attendance")|(report_type == "Members & Badges Details")) {
             var get_data_line = new Object();
             get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/settings/patrols/?action=get&sectionid='+section;
@@ -1368,6 +1397,22 @@ function assemble_data() {
         }
       }
       }
+//https://www.onlinescoutmanager.co.uk/ext/quartermaster/?action=getList&listid=5071&section=scouts&sectionid=3320
+        if (report_type=="QM List") {
+          report_config[section].qmi = new Array();
+          var qml =  JSON.parse(report_config[section].qm_list);
+          for (var qi=0; qi< qml.data.length; qi++ ) {
+            var get_data_line = new Object();
+            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/quartermaster/?action=getList&listid='+qml.data[qi].id+'&section='+section_config[section].section_type+'&sectionid='+section;
+            get_data_line.data = report_config[section];
+            get_data_line.olddata = old_report_config[section];    
+            get_data_line.type = "GET";
+            get_data_line.field = "qmi|"+qml.data[qi].id;
+            get_data_array.push(get_data_line);  
+          }
+           
+        }
+
         //https://www.onlinescoutmanager.co.uk/ext/quartermaster/eventbookings/?action=loadListsForEvent&eventid=130344&section=scouts&sectionid=3320
         if (report_type=="Events & QM Lists") {
             report_config[section].eventqm = new Array();
@@ -1529,6 +1574,18 @@ function assemble_data2() {
        { "fieldname" : "QI|Item|description", "fieldlabel" : "Description" },
        { "fieldname" : "QI|Item|quantity", "fieldlabel" : "Total Qty" },
        { "fieldname" : "QI|Item|location", "fieldlabel" : "Location" }
+        ]; 
+    var qml_field_list = [
+        { "fieldname" : "QL|List|name", "fieldlabel" : "QM List" },
+        { "fieldname" : "QI|Item|1", "fieldlabel" : "QM Item" },
+        { "fieldname" : "QI|Item|7", "fieldlabel" : "Qty Broken" },
+       { "fieldname" : "QI|Item|5", "fieldlabel" : "Condition" },
+       { "fieldname" : "QI|Item|2", "fieldlabel" : "Description" },
+       { "fieldname" : "QI|Item|6", "fieldlabel" : "Total Qty" },
+       { "fieldname" : "QI|Item|3", "fieldlabel" : "Location" },
+       { "fieldname" : "QI|Item|8", "fieldlabel" : "Purchase Date" },
+       { "fieldname" : "QI|Item|9", "fieldlabel" : "Renewal Price" },
+       { "fieldname" : "QI|Item|4", "fieldlabel" : "Notes" }
         ]; 
     var searchIDs = $('#fieldtable input:checked').map(function(){
         
@@ -1735,10 +1792,17 @@ if (event_config.structure[1].rows.length>0) { field_list = field_list + "</ul><
     }
 
 
+    if ((report_type=="QM List") ){
+    field_list = field_list + "<li>QM List<ul>";
+    for (var core in qml_field_list) {
+        
+        field_list = field_list + "<li class=\"chkfld\"><input type=\"checkbox\" name=\""+qml_field_list[core].fieldlabel+"\" value=\""+qml_field_list[core].fieldname;
+        field_list = field_list + "\" id=\""+qml_field_list[core].fieldname+"\""+is_checked(checklist,qml_field_list[core].fieldname)+">"+qml_field_list[core].fieldlabel + "</li>";
+    } 
+    field_list = field_list + "</ul></li>"; 
+    }
 
-    
-    
-    if ((report_type=="QM List")|(report_type=="Events & QM Lists") ){
+    if ((report_type=="Events & QM Lists") ){
     field_list = field_list + "<li>QM Lists<ul>";
     for (var core in qm_field_list) {
         
@@ -1850,12 +1914,12 @@ function get_data_xhr(c,f) {
 
 
 // Faster Block
-if ((get_data_array.length -1)  != c ) {
-       if (get_data_array[c+1].type == "GET") {
-              get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
-    } else { 
+//if ((get_data_array.length -1)  != c ) {
+//       if (get_data_array[c+1].type == "GET") {
+//              get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
+//    } else { 
 //       f();
-             };
+//             };
                  
      
 // End of Faster
@@ -1888,14 +1952,14 @@ var do_http = true;
             }
           }
         if (do_http==false) {
-//          if ((get_data_array.length -1)  != c ) {
-//            if (get_data_array[c+1].type == "GET") { get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
-//          } else { f(); }
+  //       if ((get_data_array.length -1)  != c ) {
+  //         if (get_data_array[c+1].type == "GET") { get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
+  //       } else { f(); }
 $( "#progressbar" ).progressbar({ value: 100 * ( get_data_array2.length / get_data_array.length ) });
            $( ".progress-label" ).text(get_data_array[c].field);
 
            get_data_array2.push(get_data_array[c]);
-           if (get_data_array.length == get_data_array2.length ) {f();}
+           if (get_data_array.length == get_data_array2.length ) {f();} else { if (get_data_array[c+1].type == "GET") { get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };};
         }
     }
     
@@ -1922,12 +1986,12 @@ $( "#progressbar" ).progressbar({ value: 100 * ( get_data_array2.length / get_da
                     else 
                       { get_data_array[c].data[get_data_array[c].field][index] = data; }
       
-      //if ((get_data_array.length -1)  != c ) {
-      // if (get_data_array[c+1].type == "GET") {
-      //        get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
-      //        } else { 
-      //        f();
-      //        }
+      if ((get_data_array.length -1)  != c ) {
+       if (get_data_array[c+1].type == "GET") {
+              get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
+              } else { 
+              f();
+              }
            $( "#progressbar" ).progressbar({ value: 100 * ( get_data_array2.length / get_data_array.length ) });
            $( ".progress-label" ).text(get_data_array[c].field);
            get_data_array2.push(get_data_array[c]);
@@ -1948,12 +2012,12 @@ $( "#progressbar" ).progressbar({ value: 100 * ( get_data_array2.length / get_da
 
 function get_data_post_xhr(c,f) {
 
-if ((get_data_array.length -1)  != c ) {
-       if (get_data_array[c+1].type == "GET") {
-              get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
-    } else { 
+//if ((get_data_array.length -1)  != c ) {
+//       if (get_data_array[c+1].type == "GET") {
+//              get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
+//    } else { 
 //       f();
-             };
+//             };
 
 
    //   $( "#progressbar" ).progressbar({ value: 100 * ( (c + 1) / get_data_array.length ) });
@@ -1980,15 +2044,19 @@ if ((get_data_array.length -1)  != c ) {
         }
         if (do_http == false) {
  
-//         if ((get_data_array.length -1)  != c ) {
-//           if (get_data_array[c+1].type == "GET") { get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
-//         } else { 
-//          f();
-//         }
+        if ((get_data_array.length -1)  != c ) {
+$( "#progressbar" ).progressbar({ value: 100 * ( get_data_array2.length / get_data_array.length ) });
+           $( ".progress-label" ).text(get_data_array[c].field);
+           get_data_array2.push(get_data_array[c]);
+ 
+           if (get_data_array[c+1].type == "GET") { get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
+         } else { 
+          f();
+         }
            $( "#progressbar" ).progressbar({ value: 100 * ( get_data_array2.length / get_data_array.length ) });
            $( ".progress-label" ).text(get_data_array[c].field);
            get_data_array2.push(get_data_array[c]);
-           if (get_data_array.length == get_data_array2.length ) {f();}
+     //      if (get_data_array.length == get_data_array2.length ) {f();}
 
  
        }
@@ -2008,6 +2076,7 @@ if ((get_data_array.length -1)  != c ) {
 
     //var obj = $.extend({}, get_data_array[c].postvar);
     $.post(url,get_data_array[c].postvar,function(data,status){
+        
        var index = "";
        if (get_data_array[c].field.indexOf("|")>1) {
           index = get_data_array[c].field.substring(get_data_array[c].field.lastIndexOf("|")+1);
@@ -2018,12 +2087,12 @@ if ((get_data_array.length -1)  != c ) {
                     else 
                       { get_data_array[c].data[get_data_array[c].field][index] = data; }
       
-    //  if ((get_data_array.length -1)  != c ) {
-    //   if (get_data_array[c+1].type == "GET") {
-     //         get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
-     //         } else { 
-     //         f();
-     //         }
+     if ((get_data_array.length -1)  != c ) {
+       if (get_data_array[c+1].type == "GET") {
+             get_data_xhr(c+1,f); } else {get_data_post_xhr(c+1,f); };
+             } else { 
+             f();
+             }
  $( "#progressbar" ).progressbar({ value: 100 * ( get_data_array2.length / get_data_array.length ) });
            $( ".progress-label" ).text(get_data_array[c].field);
        get_data_array2.push(get_data_array[c]);
@@ -2547,6 +2616,25 @@ report_line2[checklist2[field]] = getAge(members_array.data[member].date_of_birt
                 }
                }
         }
+    }
+
+
+    if (report_type == "QM List") {
+      for(var section in report_config) {
+        for (var qmi in report_config[section].qmi){
+          var qmilist = JSON.parse(report_config[section].qmi[qmi]);
+          for (var items in qmilist.data.rows) {
+           var report_line2 = new Object();
+           for (var field in checklist ) {
+             var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
+             if (fn=="name") { report_line2[checklist2[field]] = qmilist.data.list.name;} else {
+             report_line2[checklist2[field]] = qmilist.data.rows[items][fn];
+             }   
+           }
+           report_data.push(report_line2);
+         }
+      }
+     }
     }
 
     if (report_type == "Badge Stock") {
@@ -3321,6 +3409,32 @@ html = html + "<td width=10%><img src=\"icons\\red.png\"></td>"
 } 
 return html;
 }
+function api_settings_assess_access() {
+dialog_delay.dialog( "close" );
+for (var i = 0; i < roles_config.length; i++) { 
+{
+  var apidef = JSON.parse(api_setup[roles_config[i].sectionid]); 
+  for (var j = 0; j < (apidef.apis).length; j++)
+   {
+     if (apidef.apis[j].apiid==api_number) 
+     {
+       if (apidef.apis[j].permissions.empty=="true")
+       {
+        html = html + "<td colspan=5><img src=\"icons\\red.png\">No Access</td>"
+       } else
+       {
+        html = api_visual(apidef.apis[j].permissions.member, html);
+        html = api_visual(apidef.apis[j].permissions.flexi, html);
+        html = api_visual(apidef.apis[j].permissions.badge, html);
+        html = api_visual(apidef.apis[j].permissions.quartermaster, html);
+        html = api_visual(apidef.apis[j].permissions.events, html);
+      }
+     }
+}
+}
+}
+}
+
 function api_settings_table_draw() {
 dialog_delay.dialog( "close" );
 var html = "<table class=\"permissions\"><tr><th>Section</th><th>Member</th>";
@@ -3558,7 +3672,7 @@ var delr_dialog = $("#delr_dialog").dialog({ autoOpen: false, buttons: {Cancel: 
 Delete: function () {delr_dialog.dialog( "close" );delete_report();}
 }});
 
-var dialog_array = [ "Members","Members & Badges","Members & Badges Details", "Badges","Badge Stock","Events","Events & Attendance","Events & QM Lists"];
+var dialog_array = [ "Members","Members & Badges","Members & Badges Details", "Badges","Badge Stock","Events","Events & Attendance","Events & QM Lists","QM List"];
 for (dodrop in dialog_array)
 {
 $('#report_type').append($('<option>', {value:dialog_array[dodrop], text:dialog_array[dodrop]}));
