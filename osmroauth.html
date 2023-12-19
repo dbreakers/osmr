@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- Copyright David Breakwell 2021 -->
-<!-- September 2022 RElease 4.1 :  Finance -->
+<!-- September 2022 RElease 4.2 :  Reserves -->
 <!-- Please don't copy this code!   -->
  
 
@@ -48,7 +48,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 <link rel="icon" type="image/png" href="favicon/favicon-32x32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="favicon/favicon-16x16.png" sizes="16x16">
-<link rel="manifest" href="favicon/manifest.json">
+
 <link rel="mask-icon" href="favicon/safari-pinned-tab.svg" color="#5bbad5">
 <link rel="shortcut icon" href="favicon.ico">
 <meta name="msapplication-config" content="@2ndnewhawscouts.com/ssl/favicon/browserconfig.xml">
@@ -79,7 +79,7 @@
 
 <script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/blob.js"></script>
 
-
+ <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/slick.dataview.js"></script>
 <script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/slick.groupitemmetadataprovider.js"></script>
 <script type="text/javascript" src="https://www.2ndnewhawscouts.org.uk/osmr/scripts/slick.cellselectionmodel.js"></script>
@@ -99,7 +99,7 @@
 <body>
 <script>
 
-var relay_path = "https://www.2ndnewhawscouts.org.uk/osmr/osmrelayoa2.php";
+var relay_path = "https://osmr.elementfx.com/osmrelayoa2.php";
 var api_number = "42";
 var oauthcode = "";
 var osmr_version = "1.00.00";
@@ -107,8 +107,8 @@ var postcode_list = [];
 var imd_list = [];
 var url = window.location.href
 var arr = url.split("/");
-if (arr[0]!="https:") { window.location.replace("https://www.2ndnewhawscouts.org.uk/osmr/osmroauth2.html");};
-if (arr[2]!="www.2ndnewhawscouts.org.uk") { window.location.replace("https://www.2ndnewhawscouts.org.uk/osmr/osmroauth2.html");};
+if (arr[0]!="https:") { window.location.replace("https://osmr.elementfx.com/index.html");};
+//if (arr[2]!="osmr.free.nf") { window.location.replace("https://osmr.free.nf/osmroauth2.html");};
 //debugger;
 var params = (new URL(document.location)).searchParams;
 if (params.has("state")&&(params.get("state")=="logonosmr")) {
@@ -887,6 +887,21 @@ pdf_doc_copy = $.extend(true, {}, pdf_doc);
 ///////
 
 function pdf_replace(pdf_table_cell) {
+                   if (pdf_table_cell.text.search("&#10060;")>-1) { pdf_table_cell.text = pdf_table_cell.text.replace("&#10060;","h"); pdf_table_cell.font = "fontello";pdf_table_cell.color = 'red'; }
+                    if (pdf_table_cell.text.search("&#9989;")>-1) { pdf_table_cell.text = pdf_table_cell.text.replace("&#9989;","e"); pdf_table_cell.font = "fontello";pdf_table_cell.color = 'green'; }
+                    if (pdf_table_cell.text.search("&#10062;")>-1) { pdf_table_cell.text = pdf_table_cell.text.replace("&#10062;","f"); pdf_table_cell.font = "fontello";pdf_table_cell.color = 'green'; }
+                    if (pdf_table_cell.text.search("&#8413;")>-1) { pdf_table_cell.text = pdf_table_cell.text.replace("&#8413;","A"); pdf_table_cell.font = "pie";pdf_table_cell.color = '#FF0D0D'; }
+                   if (pdf_table_cell.text.search("&#9684;")>-1) {  pdf_table_cell.text =pdf_table_cell.text.replace("&#9684;","F"); pdf_table_cell.font = "pie";pdf_table_cell.color = '#FF8E15'; }
+                    if (pdf_table_cell.text.search("&#9719;")>-1) {  pdf_table_cell.text =pdf_table_cell.text.replace("&#9719;","B"); pdf_table_cell.font = "pie";pdf_table_cell.color = '#FF4E11'; }
+                      if (pdf_table_cell.text.search("&#9681;")>-1) { pdf_table_cell.text = pdf_table_cell.text.replace("&#9681;","K"); pdf_table_cell.font = "pie";pdf_table_cell.color = '#FAB733'; }
+                    if (pdf_table_cell.text.search("&#9685;")>-1) {  pdf_table_cell.text =pdf_table_cell.text.replace("&#9685;","P"); pdf_table_cell.font = "pie";pdf_table_cell.color = '#ACB334'; }
+                        if (pdf_table_cell.text.search("&#11044;")>-1) {  pdf_table_cell.text = pdf_table_cell.text.replace("&#11044;","U"); pdf_table_cell.font = "pie";pdf_table_cell.color = '#69B34C'; }
+                   
+                   return pdf_table_cell;
+}
+
+
+function pdf_replace_old(pdf_table_cell) {
      if (pdf_table_cell.text =="&#10060;") { pdf_table_cell.text = "h"; pdf_table_cell.font = "fontello";pdf_table_cell.color = 'red'; }
               if (pdf_table_cell.text =="&#9989;") { pdf_table_cell.text = "e"; pdf_table_cell.font = "fontello";pdf_table_cell.color = 'green'; }
                   if (pdf_table_cell.text =="&#10062;") { pdf_table_cell.text = "f"; pdf_table_cell.font = "fontello";pdf_table_cell.color = 'green';}
@@ -896,6 +911,7 @@ function pdf_replace(pdf_table_cell) {
                    if (pdf_table_cell.text =="&#9681;") { pdf_table_cell.text = "K"; pdf_table_cell.font = "pie";pdf_table_cell.color = '#FAB733';}
                    if (pdf_table_cell.text =="&#9685;") { pdf_table_cell.text = "P"; pdf_table_cell.font = "pie";pdf_table_cell.color = '#ACB334';}
                    if (pdf_table_cell.text =="&#11044;") { pdf_table_cell.text = "U"; pdf_table_cell.font = "pie";pdf_table_cell.color = '#69B34C';}
+           //    if (pdf_table_cell.text.search("&#11044;")>-1) { pdf_table_cell.text.replace("&#11044;","U"); pdf_table_cell.font = "pie";pdf_table_cell.color = '#69B34C'; }
                    return pdf_table_cell;
 }
 
@@ -1184,6 +1200,7 @@ menu_closeNav();
 
 function receiveMessage(f){
     console.log(f)
+    if (f.origin!="https://www.google.com") {
     oauthcode = f;
     security = f;
     if (f.data.access=="") {alert("There was an issue during logon with OSM - please try again later"); } else {
@@ -1191,9 +1208,11 @@ function receiveMessage(f){
    //   do_xhr_post('https://www.onlinescoutmanager.co.uk/oauth/resource',get_sections,parameters);
      do_xhr('https://www.onlinescoutmanager.co.uk/api.php?action=getSectionConfig',set_sections,"");
     }
+        }
 }
 
 function call_report () {
+     
  sections="";
 //$("#dialog-delay").dialog({ position: {'my': 'center',  'at': 'center top+300', of: window } });
 //dialog_delay.dialog( "open" );
@@ -1232,7 +1251,10 @@ do_xhr_post('https://www.onlinescoutmanager.co.uk/users.php?action=authorise',ge
 if (oauthcode=="") {
     access= $('#logon_access').is(":checked");
     if (access) {tail="true";} else {tail="false";}
-    window.open("https://www.2ndnewhawscouts.org.uk/osmr/osmrelayoa.php?access="+tail,"", "width=500,height=500");
+
+      response=grecaptcha.getResponse();
+    window.open("https://osmr.elementfx.com/osmrelayoa.php?captchakey="+response+"&access="+tail,"", "width=500,height=500");
+ //   window.open("https://osmr.free.nf/osmrelayoa.php?access="+tail,"", "width=500,height=500");
     window.addEventListener("message", receiveMessage, false);
 
 } else
@@ -1372,7 +1394,9 @@ gn = "";
 gc = 0;
 gal = [];
 for(var property in section_config) {
+  if (get_roles_section(property)) {                                                                
     gal.push(roles_config[get_roles_section(property)].groupname);
+  }     
 }
 gal = [...new Set(gal)];
 for (galc=0;galc<gal.length;galc++) {
@@ -1577,7 +1601,7 @@ function select_fields () {
             get_data_array.push(get_data_line);
         }
 
-        if ((report_type == "Members")|(report_type =="Programme & Attendance")|(report_type == "Members & Challenge Badges")|(report_type == "Members & Badges")|(report_type=="Events & Attendance")|(report_type == "Members & Staged Badges")|(report_type == "Members & Badges Details")|(report_type=="Members & Sections")|(report_type=="Members & WL")|(report_type=="Members & Maps")) {
+        if ((report_type == "Members")|(report_type =="Programme & Attendance")|(report_type == "Members & Challenge Badges")|(report_type == "Members & Badges")||(report_type=="Events & Attendance+")|(report_type=="Events & Attendance")|(report_type == "Members & Staged Badges")|(report_type == "Members & Badges Details")|(report_type=="Members & Sections")|(report_type=="Members & WL")|(report_type=="Members & Maps")) {
             var get_data_line = new Object();
             get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/settings/patrols/?action=get&sectionid='+section;
             report_config[section].patrol = "";
@@ -1657,7 +1681,7 @@ function select_fields () {
             get_data_array.push(get_data_line);
             }
         }
-        if ((report_type == "Events")|(report_type=="Events & QM Lists")|(report_type=="Events & Attendance")|(report_type=="Shared Event Attendance")|(report_type=="Events & Badges")) {
+        if ((report_type == "Events")|(report_type=="Events & QM Lists")|(report_type=="Events & Attendance")|(report_type=="Events & Attendance+")|(report_type=="Shared Event Attendance")|(report_type=="Events & Badges")) {
             report_config[section].events = "";
             var get_data_line = new Object();
             get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/events/summary/?action=get&sectionid='+section+'&termid='+report_config[section].termid;
@@ -1725,7 +1749,7 @@ function assemble_data() {
      $( ".progress-label" ).text('Round 2');
      var report_type = $( "#report_type option:selected" ).text();
     for(var section in report_config) {
-        if ((report_type=="Members")|(report_type=="Members & Badges")|(report_type=="Members & Challenge Badges")|(report_type=="Members & Badges Details")|(report_type=="Events & Attendance")|(report_type=="Members & Sections")|(report_type=="Members & WL")|(report_type=="Members & Maps")|(report_type == "Members & Staged Badges")) {
+        if ((report_type=="Members")|(report_type=="Members & Badges")|(report_type=="Members & Challenge Badges")|(report_type=="Members & Badges Details")|(report_type=="Events & Attendance+")|(report_type=="Events & Attendance")|(report_type=="Members & Sections")|(report_type=="Members & WL")|(report_type=="Members & Maps")|(report_type == "Members & Staged Badges")) {
         var members_array = JSON.parse(report_config[section].members);
         var mc = false;
         report_config[section].member_sections = new Array();
@@ -1922,28 +1946,44 @@ function assemble_data() {
                 }
             }
         }
-        if (report_type=="Events & Attendance") {
+        if ((report_type=="Events & Attendance")|(report_type=="Events & Attendance+")) {
          report_config[section].eventcfg = new Array();
          report_config[section].eventatt = new Array();
+         report_config[section].eventres = new Array();
             var el =  (report_config[section].events);
             for (var ev in el.items) {
-            if (el.items[ev].startdate_g  >= datepicker.value) {
-              var get_data_line = new Object();
-            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/events/event/?action=getStructureForEvent&eventid='+el.items[ev].eventid+'&sectionid='+section;
-            get_data_line.data = report_config[section];
-            get_data_line.olddata = old_report_config[section];    
-            get_data_line.type = "GET";
-            get_data_line.field = "eventcfg|"+el.items[ev].eventid;
-            get_data_array.push(get_data_line); 
-            var get_data_line = new Object();
-            get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/events/event/?action=getAttendance&eventid='+el.items[ev].eventid+'&sectionid='+section+"&termid="+report_config[section].termid;
-            get_data_line.data = report_config[section];
-            get_data_line.olddata = old_report_config[section];    
-            get_data_line.type = "GET";
-            get_data_line.field = "eventatt|"+el.items[ev].eventid;
-            get_data_array.push(get_data_line);      
+                if (el.items[ev].startdate_g  >= datepicker.value) {
+                    var get_data_line = new Object();
+                    get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/events/event/?action=getStructureForEvent&eventid='+el.items[ev].eventid+'&sectionid='+section;
+                    get_data_line.data = report_config[section];
+                    get_data_line.olddata = old_report_config[section];    
+                    get_data_line.type = "GET";
+                    get_data_line.field = "eventcfg|"+el.items[ev].eventid;
+                    get_data_array.push(get_data_line); 
+                    var get_data_line = new Object();
+                    get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/events/event/?action=getAttendance&eventid='+el.items[ev].eventid+'&sectionid='+section+"&termid="+report_config[section].termid;
+                    get_data_line.data = report_config[section];
+                    get_data_line.olddata = old_report_config[section];    
+                    get_data_line.type = "GET";
+                    get_data_line.field = "eventatt|"+el.items[ev].eventid;
+                    get_data_array.push(get_data_line);
+                    if ((report_type=="Events & Attendance+")) {
+                    var members_array = JSON.parse(report_config[section].members);
+                    for (var scout in members_array.data) {
+                        var get_data_line = new Object();
+                      //  https://www.onlinescoutmanager.co.uk/ext/events/event/?action=getAudit&sectionid=3320&scoutid=1329118&eventid=943738
+                     //    get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/events/event/?action=getAttendance&eventid='+el.items[ev].eventid+'&sectionid='+section+"&termid="+report_config[section].termid;
+                         get_data_line.url = 'https://www.onlinescoutmanager.co.uk/ext/events/event/?action=getAudit&sectionid='+section+'&eventid='+el.items[ev].eventid+'&scoutid='+members_array.data[scout].member_id;
+                        get_data_line.data = report_config[section];
+                        get_data_line.olddata = old_report_config[section];    
+                        get_data_line.type = "GET";
+                        get_data_line.field = "eventres|"+el.items[ev].eventid+"_"+members_array.data[scout].member_id;
+                        get_data_array.push(get_data_line);
+                    }
+                    }
+                }
             }
-            }
+             
         }   
     }
 
@@ -2110,6 +2150,7 @@ function assemble_data2() {
         { "fieldname" : "EV|Event|yes", "fieldlabel" : "Attending" },
         { "fieldname" : "EV|Event|no", "fieldlabel" : "Not Attending" },
         
+        
         ];
     var ev_att_list = [
         { "fieldname" : "EA|Event|attending", "fieldlabel" : "Attending" },
@@ -2117,7 +2158,13 @@ function assemble_data2() {
          { "fieldname" : "EA|Event|firstname", "fieldlabel" : "First Name" },
         { "fieldname" : "EA|Event|lastname", "fieldlabel" : "Last Name" },
         { "fieldname" : "EA|Event|startage", "fieldlabel" : "Age at Start" },
-        { "fieldname" : "EA|Event|startages", "fieldlabel" : "Age @ Start" }
+        { "fieldname" : "EA|Event|startages", "fieldlabel" : "Age @ Start" },
+        
+        ]
+       var ev_att_list_plus = [
+        
+        { "fieldname" : "EA|Event|resdate", "fieldlabel" : "Last Updated" },
+           { "fieldname" : "EA|Event|resdesc", "fieldlabel" : "Last Update Type" }
         ]
    var qm_field_list = [
         { "fieldname" : "QL|List|name", "fieldlabel" : "QM List" },
@@ -2201,7 +2248,7 @@ function assemble_data2() {
         
         
         var map_field_list = [
-        { "fieldname" : "MQ|IMD", "fieldlabel" : "IMD" }
+        { "fieldname" : "MQ|imd", "fieldlabel" : "imd" }
         ];
      var sec_field_list = [
           { "fieldname" : "SC|attendance|attendance", "fieldlabel" : "Total Attendance" }
@@ -2248,7 +2295,7 @@ function assemble_data2() {
     var report_type = $( "#report_type option:selected" ).text();
     $("#fieldlist").empty();
     $("#fieldlist").show();
-     if ((report_type=="Members & Badges")|(report_type=="Members")|(report_type=="Programme & Attendance")|(report_type=="Events & Attendance")|(report_type=="Members & Badges Details")|(report_type=="Members & Challenge Badges")|(report_type=="Members & Sections")|(report_type=="Members & WL")|(report_type=="Members & Maps")|(report_type == "Members & Staged Badges") ){
+     if ((report_type=="Members & Badges")|(report_type=="Members")|(report_type=="Programme & Attendance")|(report_type=="Events & Attendance+")|(report_type=="Events & Attendance")|(report_type=="Members & Badges Details")|(report_type=="Members & Challenge Badges")|(report_type=="Members & Sections")|(report_type=="Members & WL")|(report_type=="Members & Maps")|(report_type == "Members & Staged Badges") ){
     field_list = field_list + "<li>Members";
     field_list = field_list + "<ul><li>Core Fields";
     field_list = field_list + "<ul><li>Core Member Fields<ul>";
@@ -2429,7 +2476,7 @@ field_list = field_list + "<li>Badge Requirements per Member<ul>";
     field_list = field_list + "</ul></li>"; // Badges
 
     }
-    if ((report_type=="Events")|(report_type=="Events & QM Lists")|(report_type=="Events & Attendance")|(report_type=="Shared Event Attendance") ){
+    if ((report_type=="Events")|(report_type=="Events & QM Lists")|(report_type=="Events & Attendance+")|(report_type=="Events & Attendance")|(report_type=="Shared Event Attendance") ){
     field_list = field_list + "<li>Events<ul>";
     for (var core in ev_field_list) {
         
@@ -2536,13 +2583,20 @@ if (event_config.structure[1].rows.length>0) { field_list = field_list + "</ul><
     }
      
      
-    if ((report_type=="Events & Attendance") ){
+    if ((report_type=="Events & Attendance")|(report_type=="Events & Attendance+") ){
     field_list = field_list + "<li>Event Attendance<ul>";
     for (var core in  ev_att_list) {
         
         field_list = field_list + "<li class=\"chkfld\"><input type=\"checkbox\" name=\""+ev_att_list[core].fieldlabel+"\" value=\""+ev_att_list[core].fieldname;
         field_list = field_list + "\" id=\""+ev_att_list[core].fieldname+"\""+is_checked(checklist,ev_att_list[core].fieldname)+">"+ev_att_list[core].fieldlabel + "</li>";
     } 
+    if (report_type=="Events & Attendance+") {
+        for (var core in  ev_att_list_plus) {
+        
+        field_list = field_list + "<li class=\"chkfld\"><input type=\"checkbox\" name=\""+ev_att_list_plus[core].fieldlabel+"\" value=\""+ev_att_list_plus[core].fieldname;
+        field_list = field_list + "\" id=\""+ev_att_list_plus[core].fieldname+"\""+is_checked(checklist,ev_att_list_plus[core].fieldname)+">"+ev_att_list_plus[core].fieldlabel + "</li>";
+    } 
+    }
         for (var section in report_config) {
         field_list = field_list + "<li>Events for "+roles_config[get_roles_section(section)].groupname+":"+roles_config[ get_roles_section(section) ].sectionname +"<ul>"
         for (var events in report_config[section].eventcfg) {
@@ -3389,7 +3443,7 @@ dialog_delay.dialog( "open" );
                     }
                 }
                 lsoa = [...new Set(lsoa.map(item => item))];
-                if (checklist.find(a=>a=="MQ|IMD")!=undefined) {
+                if (checklist.find(a=>a=="MQ|imd")!=undefined) {
                 
                 for (pc=0;pc<lsoa.length;pc++){
                     arrReturn="";
@@ -3419,7 +3473,7 @@ dialog_delay.dialog( "open" );
                             },
                         async:false
                     });
-                      if (arrReturn.hasOwnProperty('features')&(arrReturn.features.length!=0)) {
+                      if (arrReturn.hasOwnProperty('features')) {
                         v = new Object;
                         v.lsoa = lsoa[pc];
                         v.imd = parseInt(100*(arrReturn.features[0].attributes['imd16']/6976));
@@ -3435,7 +3489,7 @@ dialog_delay.dialog( "open" );
                             },
                         async:false
                     });
-                        if (arrReturn.hasOwnProperty('features')&(arrReturn.features.length!=0)) {
+                        if (arrReturn.hasOwnProperty('features')) {
                         v = new Object;
                         v.lsoa = lsoa[pc];
                         v.imd = parseInt(100*(arrReturn.features[0].attributes['wimd_2019']/1909));
@@ -3675,7 +3729,7 @@ dialog_delay.dialog( "open" );
             if (report_type=='Members & Maps')   {
                  for (var field in checklist ) {
                       var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
-                      if (fn=='IMD') {
+                      if (fn=='imd') {
                           report_line.imd = "";
                           for (i in report_line) {
                              if (i.indexOf('Postcode')>-1) {
@@ -3684,7 +3738,9 @@ dialog_delay.dialog( "open" );
                                 if (ll!=undefined&&ll.result!=null) {
                                     lsoa = ll.result.codes.lsoa
                                     imd = imd_list.find(a=>a.lsoa==lsoa);
-                                    report_line.IMD = imd.imd;
+                                    if (imd!=undefined) {
+                                    report_line.imd = imd.imd;
+                                    }
                                 }    
                              }
                              
@@ -3944,10 +4000,10 @@ var bmd_index = bmd.items.findIndex(function find(a){return a.scoutid==member;})
                                            }
                                            
                                        }
-                                       if (tn>0) { if (fn=="needed") {report_line3[checklist2[field]]="Requried"} else {report_line3[checklist2[field]]="&#10060;"} } 
-                                         else {if (fn=="needed") {report_line3[checklist2[field]]="Not Requried";} else {report_line3[checklist2[field]]="&#10062;";} }
+                                       if (tn>0) { if (fn=="needed") {report_line3[checklist2[field]]="Required"} else {report_line3[checklist2[field]]="&#10060;"} } 
+                                         else {if (fn=="needed") {report_line3[checklist2[field]]="Not Required";} else {report_line3[checklist2[field]]="&#10062;";} }
                                       } else { if (fn=="needed") {report_line3[checklist2[field]]="Completed" } else {report_line3[checklist2[field]]="&#9989;" }}
-                              }
+                              } else {report_line3[checklist2[field]]=""}
                               }
                              
                               if (fn=="countdone") {
@@ -4012,13 +4068,13 @@ var bmd_index = bmd.items.findIndex(function find(a){return a.scoutid==member;})
                             
                            } // BD Field
                           } // Fields
-                           if (((report_type == "Members & Staged Badges")&((badges=='94_0')||(badges=='95_0')))||(report_type != "Members & Staged Badges")) {
+                      //     if (((report_type == "Members & Staged Badges")&((badges=='94_0')||(badges=='95_0')))||(report_type != "Members & Staged Badges")) {
                             if ((report_type == "Members & Staged Badges")&(report_line3['Member Status']=="")) {
                                 report_line3['Member Status'] = 0;
                             }
                              report_data.push(report_line3);
                            }
-                           }
+                     //      }
                          } // BAdges & Details
 
                     } // Badge
@@ -4186,7 +4242,7 @@ report_line2[checklist2[field]] = getAge(attendee_list.items[attendee].dob, evli
     
     
     
-    if (report_type=="Events & Attendance") {
+    if ((report_type=="Events & Attendance")|(report_type=="Events & Attendance+")) {
         for(var section in report_config) {
                var evlist =  (report_config[section].events);
                for (var events in evlist.items) {
@@ -4248,6 +4304,22 @@ report_line2[checklist2[field]] = getAge(attendee_list.items[attendee].dob, evli
                        if ( checklist[field].substring(0,8)=="EA|Event" ){
                          var fn = checklist[field].substring(checklist[field].lastIndexOf("|")+1);
                               report_line2[checklist2[field]] = attendee_list.items[attendee][fn];   
+if ((report_type=="Events & Attendance+")){                              
+if (fn=="resdate"){
+    if (typeof(members_array.data[member])!="undefined") {
+      if (report_config[section].eventres[evlist.items[events].eventid+"_"+members_array.data[member].member_id].length>0)   { 
+        report_line2[checklist2[field]] =   report_config[section].eventres[evlist.items[events].eventid+"_"+members_array.data[member].member_id][0].date;
+    } else {report_line2[checklist2[field]]="";}
+    }
+}
+if (fn=="resdesc"){
+    if (typeof(members_array.data[member])!="undefined") {
+      if (report_config[section].eventres[evlist.items[events].eventid+"_"+members_array.data[member].member_id].length>0)   { 
+        report_line2[checklist2[field]] =   report_config[section].eventres[evlist.items[events].eventid+"_"+members_array.data[member].member_id][0].desc;
+    }  else {report_line2[checklist2[field]]="";}
+    }
+}
+}
 if (fn=="startage") {
 if (typeof(members_array.data[member])!="undefined") {
 report_line2[checklist2[field]] = getAge(members_array.data[member].date_of_birth, evlist.items[events]["startdate"],"a");  
@@ -4691,8 +4763,9 @@ divIcon = L.divIcon({
  //    current_geojson.addData(gf);
     
     current_geojson.addData(gf);
-       markers.addLayer(current_geojson);
-  mymap.addLayer(markers);
+     //  markers.addLayer(current_geojson);
+       mymap.addLayer(current_geojson);
+ // mymap.addLayer(markers);
  // mymap.removeLayer(current_geojson); 
     //   markers.addLayer(current_geojson);
     //  mymap.addLayer(markers);
@@ -5096,6 +5169,9 @@ display_option = $('input[type=radio][name=render]:checked').val();
           if ($("#mapid").is(":visible")) { $("#mapid").toggle();} 
         $("#reportoutput").pivotUI(report_data, pvtOpts,refresh_layout);
         $("#reportoutput").append("<br>Drag fields from the blue 'dock' area to the pink columns and rows areas.");
+        if (report_type=='Members & Maps') {
+            $("#reportoutput").append("<br>For a map layout select Map option from the menu .");
+        }
         
     }  else if (display_option=='map') {
          checklist = Array.from(new Set(checklist));
@@ -5337,6 +5413,9 @@ divIcon = L.divIcon({
   $("#tablereportoutput3").css('max-width', (0.8*$("#reportoutput").width())+"px");
   $("#tablesortlist").html(sortlist);
   $("#tablesortlist").prepend("Output: <select class=\"slickot\" ><option value=\"grid\">Grid</option><option value=\"pdf\">PDF</option><option value=\"pdfd\">PDF Download</option></select><br><button id=\"expall\" type=\"button\">Expand All</button><button id=\"collall\" type=\"button\">Collapse All</button><br><br><small>Drag fields from the blue dock area to the pink area. The fields below can also be dragged to change the sort sequence.</small><br><br><b>Sort Sequence</b>");
+   if (report_type=='Members & Maps') {
+             $("#tablesortlist").append("<small><b>For a map layout select Map option from the menu .</b><small>");
+        }
   if(slick_full_config.hasOwnProperty("output_type")) {
      $(".slickot").val(slick_full_config.output_type);
   }
@@ -5846,7 +5925,10 @@ select_checks2();
 <div id="osmr_logon"><!--<span id="username_block">Username: <input type="text" name="username" id="username"></span>
 <span id="password_block">Password: <input type="password" name="password" id="password">-->
 Exclude Access Report<input type="checkbox" id="logon_access" name="logon_access">
-<button type="button" onclick="call_report()" id="logon_button">Log On</button></span></div>
+<button type="button" onclick="call_report()" id="logon_button">Log On</button>
+ <div class="g-recaptcha" data-sitekey="6LdrLccaAAAAANO5ATWYHsdRscUBNVcpjCBbhjre"></div>
+</span></div>
+ 
 
 <div id="osmr_loggedon">
 <!--<button id="logout_button" type="button" onclick="log_out()">Log Out</button> --> 
@@ -5999,9 +6081,9 @@ Delete: function () {delr_dialog.dialog( "close" );delete_report();}
 }});
  access= $('#logon_access').is(":checked");
 if (!access) {
-var dialog_array = [ "Members","Members & Badges","Members & Badges Details","Members & Challenge Badges","Members & Staged Badges","Members & Sections", "Members & WL","Members & Maps", "Badges","Badge Stock","Events","Events & Attendance","Events & QM Lists","QM List","User Access","Programme & Badges","Programme & Attendance","Gift Aid","Shared Event Attendance","Events & Badges","Online Payments"];
+var dialog_array = [ "Members","Members & Badges","Members & Badges Details","Members & Challenge Badges","Members & Staged Badges","Members & Sections", "Members & WL","Members & Maps", "Badges","Badge Stock","Events","Events & Attendance","Events & Attendance+","Events & QM Lists","QM List","User Access","Programme & Badges","Programme & Attendance","Gift Aid","Shared Event Attendance","Events & Badges","Online Payments"];
 } else {
-   var dialog_array = [ "Members","Members & Badges","Members & Badges Details","Members & Challenge Badges","Members & Staged Badges","Members & Sections", "Members & WL","Members & Maps","Badges","Badge Stock","Events","Events & Attendance","Events & QM Lists","QM List","Programme & Badges","Programme & Attendance","Gift Aid","Shared Event Attendance","Events & Badges","Online Payments"]; 
+   var dialog_array = [ "Members","Members & Badges","Members & Badges Details","Members & Challenge Badges","Members & Staged Badges","Members & Sections", "Members & WL","Members & Maps","Badges","Badge Stock","Events","Events & Attendance","Events & Attendance+","Events & QM Lists","QM List","Programme & Badges","Programme & Attendance","Gift Aid","Shared Event Attendance","Events & Badges","Online Payments"]; 
 }
 for (dodrop in dialog_array)
 {
